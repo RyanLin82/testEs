@@ -1,0 +1,6 @@
+org/cmsideproject/book/model/Book.class
+org/cmsideproject/book/service/BookServiceImpl.class
+org/cmsideproject/Application.class
+org/cmsideproject/EsConfig.class
+org/cmsideproject/book/repository/BookRepository.class
+org/cmsideproject/book/service/BookService.class
