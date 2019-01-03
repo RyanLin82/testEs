@@ -1,5 +1,7 @@
 package org.cmsideproject.minera.service;
 
+import java.util.List;
+
 import org.cmsideproject.minera.entity.TicketSumaryDTO;
 
 public abstract class TicketSumaryService extends Validation{
@@ -18,5 +20,5 @@ public abstract class TicketSumaryService extends Validation{
     
     public abstract void update(String indexName, String insertData, String dataIndex);
     
-    public abstract void getAll(String indexName);
+    public abstract List<TicketSumaryDTO> getAll(String indexName);
 }

@@ -1,5 +1,6 @@
 package org.cmsideproject.config;
 
+import org.cmsideproject.mivera.resttemplate.CustomRestTemplateCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -124,12 +125,17 @@ public class EsConfig {
 		return restTemplate;
 	}
 
-	@Bean(name = "HttpHeaderCus")
+	@Bean
 	public HttpHeaders httpHeader() {
 		HttpHeaders headers = new HttpHeaders();
 		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
 		headers.setContentType(type);
 		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
 		return headers;
+	}
+	
+	@Bean
+	public CustomRestTemplateCustomizer customRestTemplateCustomizer() {
+	    return new CustomRestTemplateCustomizer();
 	}
 }
