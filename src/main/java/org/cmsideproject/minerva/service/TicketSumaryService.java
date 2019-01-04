@@ -1,8 +1,8 @@
-package org.cmsideproject.minera.service;
+package org.cmsideproject.minerva.service;
 
 import java.util.List;
 
-import org.cmsideproject.minera.entity.TicketSumaryDTO;
+import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 
 public abstract class TicketSumaryService extends Validation{
 

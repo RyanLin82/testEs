@@ -1,11 +1,8 @@
-package org.cmsideproject.minera.entity;
-
-import java.util.Date;
+package org.cmsideproject.minerva.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TicketSumaryDTO {
-
 
 	@JsonProperty("BA Assignee")
 	private String baAssignee;
@@ -25,8 +22,8 @@ public class TicketSumaryDTO {
 	@JsonProperty("DEV Location")
 	private String devLocation;
 
-	@JsonProperty("Done Date")
-	private Date doneDate;
+	@JsonProperty("Done String")
+	private String doneDate;
 
 	@JsonProperty("Exception #")
 	private long Exception;
@@ -149,11 +146,11 @@ public class TicketSumaryDTO {
 		this.devLocation = devLocation;
 	}
 
-	public Date getDoneDate() {
+	public String getDoneDate() {
 		return doneDate;
 	}
 
-	public void setDoneDate(Date doneDate) {
+	public void setDoneDate(String doneDate) {
 		this.doneDate = doneDate;
 	}
 

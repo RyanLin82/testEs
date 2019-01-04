@@ -20,7 +20,7 @@ public class Swagger2 {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.cmsideproject.minera.controller"))
+                .apis(RequestHandlerSelectors.basePackage("org.cmsideproject.minerva.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
