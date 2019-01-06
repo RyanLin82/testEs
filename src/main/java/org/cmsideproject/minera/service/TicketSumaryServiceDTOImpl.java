@@ -2,13 +2,11 @@ package org.cmsideproject.minera.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.cmsideproject.minera.entity.TicketSumaryDTO;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,26 +88,26 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> participantJsonList = new HashMap<>();
 		try {
-			participantJsonList = mapper.readValue(test.getBody(), Map.class);
+			participantJsonList = mapper.readValue(test.getBody(), new TypeReference<Map<String,Object>>(){});
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		Map str1 = (Map) participantJsonList.get("hits");
+		List<Map<String, Object>> str1 = new ArrayList<>();
+		str1 = (List<Map<String, Object>>) participantJsonList.get("hits");
 
 		List<TicketSumaryDTO> map2 = new ArrayList<>();
-		try {
-			map2 = mapper.readValue(str1.toString(), new TypeReference<List<TicketSumaryDTO>>() {
-			});
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			map2 = mapper.readValue(str1.get("hits").toString(), new TypeReference<List<TicketSumaryDTO>>(){});
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		log.info("getAll method response : " + test);
 
-		return map2;
+//		return map2;
+		return new ArrayList<>();
 
 	}
 
