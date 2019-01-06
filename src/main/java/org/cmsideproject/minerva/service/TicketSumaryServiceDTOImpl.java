@@ -1,4 +1,4 @@
-package org.cmsideproject.minera.service;
+package org.cmsideproject.minerva.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmsideproject.minera.entity.TicketSumaryDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.cmsideproject.minerva.entity.TicketSumaryDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,13 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private Logger log = LogManager.getLogger(this.getClass());
 
 	@Value("${file.directory}")
 	private String esUrl;
@@ -46,13 +46,16 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 
 	}
 
+	/**
+	 * Insert datas into certain index.
+	 */
 	@Override
 	public void post(String indexName, String insertData) {
-		if (!this.hasIndex(indexName)) {
-			log.info("post error");
-		}
 
-		ResponseEntity<String> test = restTemplate.postForEntity(esUrl + "/" + indexName + "/",
+//		if (!this.hasIndex(indexName)) {
+//			log.info("post error");
+//		}
+		ResponseEntity<String> test = restTemplate.postForEntity(esUrl + "/" + indexName + "/_doc/",
 				new HttpEntity<>(insertData, headers), String.class);
 
 		System.out.println(test);
@@ -76,6 +79,9 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 
 	}
 
+	/**
+	 * Get 1000 datas from certain index.
+	 */
 	@Override
 	public List<TicketSumaryDTO> getAll(String indexName) {
 
@@ -83,35 +89,30 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 
 		log.info(esUrl);
 
-		ResponseEntity<String> test = restTemplate.getForEntity(esUrl, String.class);
-		log.info(test.getBody());
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> participantJsonList = new HashMap<>();
+		ResponseEntity<String> response = restTemplate.getForEntity(esUrl, String.class);
+		log.info(response.getBody());
+		ObjectMapper mapper1 = new ObjectMapper();
+		Map<String, Object> responseBodyMap = new HashMap<>();
 		try {
-			participantJsonList = mapper.readValue(test.getBody(), new TypeReference<Map<String,Object>>(){});
+			responseBodyMap = mapper1.readValue(response.getBody(), Map.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<Map<String, Object>> str1 = new ArrayList<>();
-		str1 = (List<Map<String, Object>>) participantJsonList.get("hits");
+		List<TicketSumaryDTO> resultList = new ArrayList<>();
+		Map responseHits = (Map) responseBodyMap.get("hits");
+		List<Map<String, Object>> dataList = (List<Map<String, Object>>) responseHits.get("hits");
 
-		List<TicketSumaryDTO> map2 = new ArrayList<>();
-//		try {
-//			map2 = mapper.readValue(str1.get("hits").toString(), new TypeReference<List<TicketSumaryDTO>>(){});
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		ModelMapper mapper2 = new ModelMapper();
+		for (Map<String, Object> map : dataList) {
+			TicketSumaryDTO ticket = mapper2.map(map.get("_source"), TicketSumaryDTO.class);
+			resultList.add(ticket);
+		}
 
-		log.info("getAll method response : " + test);
+		log.info("getAll method response : " + response);
 
-//		return map2;
-		return new ArrayList<>();
+		return resultList;
 
 	}
-
-//	@Autowired
-//	RestTempateCus restTemplate;
 
 }

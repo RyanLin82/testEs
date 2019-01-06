@@ -1,4 +1,4 @@
-package org.cmsideproject.minera.service;
+package org.cmsideproject.minerva.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.logging.Logger;
@@ -27,7 +27,7 @@ public class Validation {
 		String result = restTemplate.getForObject(url, String.class);
 	    
 		if(StringUtils.isEmpty(result)){
-			log.info("index not found, index name:" + indexName);
+//			log.info("index not found, index name:" + indexName);
 			return false;
 		}
 		

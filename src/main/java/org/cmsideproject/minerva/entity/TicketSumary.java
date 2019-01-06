@@ -1,3 +1,4 @@
+package org.cmsideproject.minerva.entity;
 //package org.cmsideproject.minera.entity;
 //
 //import org.springframework.data.annotation.Id;

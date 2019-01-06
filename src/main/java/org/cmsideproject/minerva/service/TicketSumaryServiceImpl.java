@@ -1,3 +1,4 @@
+package org.cmsideproject.minerva.service;
 //package org.cmsideproject.minera.service;
 //
 //import java.util.List;
