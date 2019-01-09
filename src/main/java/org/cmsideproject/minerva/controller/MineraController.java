@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -49,7 +50,7 @@ public class MineraController {
 	 * @param data
 	 * @return 
 	 */
-	@RequestMapping(value = "minera/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "minerva/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public String postIndex(@PathVariable("index") String index, @RequestBody String data) {
 
 		ticketSumaryService.post(index, data);
@@ -63,7 +64,7 @@ public class MineraController {
 	 * @param index
 	 * @return if there is data in certain index then return data value; otherwise return empty arraylist.
 	 */
-	@RequestMapping(value = "minera/get/{index}", method = RequestMethod.GET)
+	@RequestMapping(value = "minerva/get/{index}", method = RequestMethod.GET)
 	public List<TicketSumaryDTO> getAll(@PathVariable("index") String index) {
 
 		List<TicketSumaryDTO> reponse = ticketSumaryService.getAll(index);
@@ -73,6 +74,21 @@ public class MineraController {
 		}
 
 		return reponse;
+
+	}
+	
+	/**
+	 * Insert datas into certain index.
+	 * @param index
+	 * @param data
+	 * @return 
+	 */
+	@RequestMapping(value = "minerva/update/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public String updateDataByJiraNum(@PathVariable("index") String indexName, @RequestBody String data, @RequestParam(value = "jiraNum") String jiraNum) {
+
+		ticketSumaryService.update(indexName, data, jiraNum);
+
+		return "OK";
 
 	}
 }
