@@ -34,6 +34,7 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 
 	@Autowired
 	HttpHeaders headers;
+	
 
 	@Override
 	public TicketSumaryDTO save(TicketSumaryDTO TicketSumary) {
@@ -99,10 +100,24 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 			e.printStackTrace();
 		}
 
-		String updateJson = "{\r\n" + "  \"query\": { \r\n" + "    \"match\": \r\n" + updateData
-				+ "    }\r\n" + "  ,\r\n" + "  \"script\": {\r\n"
-				+ "    \"inline\": \"ctx._source.Jira = '" +	jiraId
-				+ "' \"\r\n" 
+		ObjectMapper mopper = new ObjectMapper();
+		Map<String, String> updateDataMap = new HashMap<>();
+		try {
+			updateDataMap = mopper.readValue(updateData, Map.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String updateStr = "";
+		String updateStrTemplate = "";
+		for(Map.Entry map : updateDataMap.entrySet()) {
+			updateStrTemplate += "ctx._source['" + map.getKey() +"'] = '" + map.getValue() + "';";
+		}
+		String updateJson = "{\r\n" + "  \"query\": { \r\n" + "    \"match\": \r\n { \"Jira\" : \"" + jiraId +"\""
+				+ "    }\r\n" + "  },\r\n" + "  \"script\": {\r\n"
+				+ "    \"inline\": \"" + updateStrTemplate
+				+ " \"" 
 				+ "  }\r\n" + "}";
 		log.info("tototo: \n " +updateJson);
 		ResponseEntity<String> response = restTemplate.postForEntity(url.toString(), new HttpEntity<>(updateJson, headers),
@@ -147,5 +162,4 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 		return resultList;
 
 	}
-
 }

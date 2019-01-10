@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
+import org.cmsideproject.minerva.repo.TicketSumaryRepo;
 import org.cmsideproject.minerva.service.TicketSumaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -21,6 +22,9 @@ public class MineraController {
 
 	@Autowired
 	TicketSumaryService ticketSumaryService;
+	
+	@Autowired
+	TicketSumaryRepo ticketSumaryRepo ;
 
 //	@RequestMapping(value = "minera/test", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 //	public String test() {
@@ -67,11 +71,12 @@ public class MineraController {
 	@RequestMapping(value = "minerva/get/{index}", method = RequestMethod.GET)
 	public List<TicketSumaryDTO> getAll(@PathVariable("index") String index) {
 
-		List<TicketSumaryDTO> reponse = ticketSumaryService.getAll(index);
-
-		if (StringUtils.isEmpty(reponse)) {
-			return new ArrayList<>();
-		}
+		List<TicketSumaryDTO> reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(index);
+//		List<TicketSumaryDTO> reponse = ticketSumaryService.getAll(index);
+//
+//		if (StringUtils.isEmpty(reponse)) {
+//			return new ArrayList<>();
+//		}
 
 		return reponse;
 
@@ -86,7 +91,7 @@ public class MineraController {
 	@RequestMapping(value = "minerva/update/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public String updateDataByJiraNum(@PathVariable("index") String indexName, @RequestBody String data, @RequestParam(value = "jiraNum") String jiraNum) {
 
-		ticketSumaryService.update(indexName, data, jiraNum);
+//		ticketSumaryService.update(indexName, data, jiraNum);
 
 		return "OK";
 
