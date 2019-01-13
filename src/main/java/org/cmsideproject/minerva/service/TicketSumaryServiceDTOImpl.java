@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -33,6 +34,7 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 
 	@Autowired
 	HttpHeaders headers;
+	
 
 	@Override
 	public TicketSumaryDTO save(TicketSumaryDTO TicketSumary) {
@@ -55,6 +57,16 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 //		if (!this.hasIndex(indexName)) {
 //			log.info("post error");
 //		}
+
+		ObjectMapper mapper = new ObjectMapper();
+		List<TicketSumaryDTO> participantJsonList = new ArrayList<>();
+		try {
+			participantJsonList = mapper.readValue(insertData, new TypeReference<List<TicketSumaryDTO>>() {
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		ResponseEntity<String> test = restTemplate.postForEntity(esUrl + "/" + indexName + "/_doc/",
 				new HttpEntity<>(insertData, headers), String.class);
 
@@ -74,9 +86,45 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 	}
 
 	@Override
-	public void update(String indexName, String insertData, String dataIndex) {
+	public void update(String indexName, String updateData, String jiraId) {
 		// TODO Auto-generated method stub
 
+		StringBuilder url = new StringBuilder(esUrl);
+		url.append('/').append(indexName).append('/').append("_update_by_query");
+		ObjectMapper mapper = new ObjectMapper();
+		TicketSumaryDTO participantJsonList = new TicketSumaryDTO();
+		try {
+			participantJsonList = mapper.readValue(updateData, TicketSumaryDTO.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ObjectMapper mopper = new ObjectMapper();
+		Map<String, String> updateDataMap = new HashMap<>();
+		try {
+			updateDataMap = mopper.readValue(updateData, Map.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String updateStr = "";
+		String updateStrTemplate = "";
+		for(Map.Entry map : updateDataMap.entrySet()) {
+			updateStrTemplate += "ctx._source['" + map.getKey() +"'] = '" + map.getValue() + "';";
+		}
+		String updateJson = "{\r\n" + "  \"query\": { \r\n" + "    \"match\": \r\n { \"Jira\" : \"" + jiraId +"\""
+				+ "    }\r\n" + "  },\r\n" + "  \"script\": {\r\n"
+				+ "    \"inline\": \"" + updateStrTemplate
+				+ " \"" 
+				+ "  }\r\n" + "}";
+		log.info("tototo: \n " +updateJson);
+		ResponseEntity<String> response = restTemplate.postForEntity(url.toString(), new HttpEntity<>(updateJson, headers),
+				String.class);
+		log.info(response.getBody());
+		
+		
 	}
 
 	/**
@@ -85,11 +133,11 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 	@Override
 	public List<TicketSumaryDTO> getAll(String indexName) {
 
-		esUrl = esUrl + "/" + indexName + "/_doc/_search/?size=1000";
+		String getUrl = esUrl + "/" + indexName + "/_doc/_search/?size=1000";
 
 		log.info(esUrl);
 
-		ResponseEntity<String> response = restTemplate.getForEntity(esUrl, String.class);
+		ResponseEntity<String> response = restTemplate.getForEntity(getUrl, String.class);
 		log.info(response.getBody());
 		ObjectMapper mapper1 = new ObjectMapper();
 		Map<String, Object> responseBodyMap = new HashMap<>();
@@ -114,5 +162,4 @@ public class TicketSumaryServiceDTOImpl extends TicketSumaryService {
 		return resultList;
 
 	}
-
 }
