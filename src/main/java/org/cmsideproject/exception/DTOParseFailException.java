@@ -8,4 +8,9 @@ public class DTOParseFailException extends MinervaException {
 	public DTOParseFailException(String ticketNum, Throwable throwable) {
 		super(throwable, CODE, ticketNum);
 	}
+
+	@Override
+	public String getCode() {
+		return CODE;
+	}
 }

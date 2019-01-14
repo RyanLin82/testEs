@@ -13,4 +13,6 @@ public abstract class MinervaException extends Exception{
 	public MinervaException(String code, String... args) {
 		super(ExceptionMessager.getInstance().decode(code, args));
 	}
+	
+	public abstract String getCode();
 }

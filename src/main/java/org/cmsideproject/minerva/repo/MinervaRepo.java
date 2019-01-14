@@ -9,7 +9,9 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
+import org.cmsideproject.exception.MinervaException;
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +51,9 @@ public abstract class MinervaRepo<T> {
 	 * @param indexName
 	 * @return if there is any data in the elasticsearch server than return list of data object ; otherwise return empty collection. 
 	 * @throws ElasticSearchRequestException 
+	 * @throws DTOParseFailException 
 	 */
-	public Collection<T> getAll(String indexName) throws ElasticSearchRequestException {
+	public Collection<T> getAll(String indexName) throws ElasticSearchRequestException, DTOParseFailException {
 
 		String getUrl = esUrl + "/" + indexName + "/_doc/_search/?size=1000";
 
@@ -71,8 +74,7 @@ public abstract class MinervaRepo<T> {
 		try {
 			responseBodyMap = mapper1.readValue(response.getBody(), Map.class);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DTOParseFailException("getAll from " + indexName + " error", e);
 		}
 		Collection<T> resultList = new ArrayList<>();
 		Map responseHits = (Map) responseBodyMap.get("hits");
@@ -80,17 +82,17 @@ public abstract class MinervaRepo<T> {
 
 		resultList = this.listMapToListObject(dataList);
 
-		log.info("getAll method response : " + response);
+		log.info("\n GetAll data from \n Index : [{}] \n Url : [{}] \n response body : [{}]", indexName, esUrl, resultList);
 
 		return resultList;
 
 	}
 
-	public void post(String indexName, String insertData) {
+	public void post(String indexName, String insertData) throws Exception {
 
 		if (!checkInputDataFormat(insertData)) {
-			log.info("post error");
-			return;
+			log.info("post error\n index name : [{}] \n insertData : [{}]", indexName, insertData);
+//			throw new DTOParseFailException("getAll from " + indexName + " error");
 		}
 
 		ResponseEntity<String> test = restTemplate.postForEntity(esUrl + "/" + indexName + "/_doc/",
@@ -99,27 +101,24 @@ public abstract class MinervaRepo<T> {
 		System.out.println(test);
 	}
 
-	public void update(String indexName, String updateData, String jiraId) {
+	public void update(String indexName, String updateData, String jiraId) throws Exception {
 
 		if (!checkInputDataFormat(updateData)) {
 			log.info("post error");
-			return;
+			throw new Exception("post from " + indexName + " error");
 		}
 
 		StringBuilder url = new StringBuilder(esUrl);
 		url.append('/').append(indexName).append('/').append("_update_by_query");
-		ObjectMapper mapper = new ObjectMapper();
 
 		ObjectMapper mopper = new ObjectMapper();
 		Map<String, String> updateDataMap = new HashMap<>();
 		try {
 			updateDataMap = mopper.readValue(updateData, Map.class);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DTOParseFailException("update from " + indexName + " error", e);
 		}
 
-		String updateStr = "";
 		String updateStrTemplate = "";
 		for (Map.Entry map : updateDataMap.entrySet()) {
 			updateStrTemplate += "ctx._source['" + map.getKey() + "'] = '" + map.getValue() + "';";
@@ -128,7 +127,7 @@ public abstract class MinervaRepo<T> {
 				+ "    }\r\n" + "  },\r\n" + "  \"script\": {\r\n" + "    \"inline\": \"" + updateStrTemplate + " \""
 				+ "  }\r\n" + "}";
 
-		log.info("tototo: \n " + updateJson);
+		log.info("URL : [{}] \n Update Json : [{}]", url.toString(), updateJson);
 		ResponseEntity<String> response = restTemplate.postForEntity(url.toString(),
 				new HttpEntity<>(updateJson, headers), String.class);
 		log.info(response.getBody());
