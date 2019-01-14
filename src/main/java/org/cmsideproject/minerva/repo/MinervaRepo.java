@@ -13,9 +13,11 @@ import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,12 +64,6 @@ public abstract class MinervaRepo<T> {
 		Map responseHits = (Map) responseBodyMap.get("hits");
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) responseHits.get("hits");
 
-//		ModelMapper mapper2 = new ModelMapper();
-//		for (Map<String, Object> map : dataList) {
-//			T ticket = mapper2.map(map.get("_source"), T.);
-//			resultList.add(ticket);
-//		}
-
 		resultList = this.listMapToListObject(dataList);
 
 		log.info("getAll method response : " + response);
@@ -76,20 +72,70 @@ public abstract class MinervaRepo<T> {
 
 	}
 
+	public void post(String indexName, String insertData) {
+
+		if (!checkInputDataFormat(insertData)) {
+			log.info("post error");
+			return;
+		}
+
+		ResponseEntity<String> test = restTemplate.postForEntity(esUrl + "/" + indexName + "/_doc/",
+				new HttpEntity<>(insertData, headers), String.class);
+
+		System.out.println(test);
+	}
+
 	private Collection<T> listMapToListObject(List<Map<String, Object>> dataList) {
 		List<T> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
-		int flag = 0;
 		for (Map<String, Object> map : dataList) {
 			T ticket = mapper2.map(map.get("_source"), clazz);
 			resultList.add(ticket);
-			System.out.println(flag++);
 		}
 		return resultList;
 	}
 
-	private boolean checkData(String data) {
-		ObjectMapper mapper1 = new ObjectMapper();
-		T responseBodyMap = mapper1.readValue(data, clazz.getClass());
+	private boolean checkInputDataFormat(String inputData) {
+		if (StringUtils.isEmpty(inputData)) {
+			return false;
+		}
+
+		T ticket = new ModelMapper().map(inputData, clazz);
+		return true;
+	}
+
+	public void update(String indexName, String updateData, String jiraId) {
+
+		if (!checkInputDataFormat(updateData)) {
+			log.info("post error");
+			return;
+		}
+
+		StringBuilder url = new StringBuilder(esUrl);
+		url.append('/').append(indexName).append('/').append("_update_by_query");
+		ObjectMapper mapper = new ObjectMapper();
+
+		ObjectMapper mopper = new ObjectMapper();
+		Map<String, String> updateDataMap = new HashMap<>();
+		try {
+			updateDataMap = mopper.readValue(updateData, Map.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String updateStr = "";
+		String updateStrTemplate = "";
+		for (Map.Entry map : updateDataMap.entrySet()) {
+			updateStrTemplate += "ctx._source['" + map.getKey() + "'] = '" + map.getValue() + "';";
+		}
+		String updateJson = "{\r\n" + "  \"query\": { \r\n" + "    \"match\": \r\n { \"Jira\" : \"" + jiraId + "\""
+				+ "    }\r\n" + "  },\r\n" + "  \"script\": {\r\n" + "    \"inline\": \"" + updateStrTemplate + " \""
+				+ "  }\r\n" + "}";
+
+		log.info("tototo: \n " + updateJson);
+		ResponseEntity<String> response = restTemplate.postForEntity(url.toString(),
+				new HttpEntity<>(updateJson, headers), String.class);
+		log.info(response.getBody());
 	}
 }
