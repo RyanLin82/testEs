@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class MinervaRepo<T> {
 
 	private Logger log = LogManager.getLogger(this.getClass());
-	
+
 	@Value("${file.directory}")
 	private String esUrl;
 
@@ -33,13 +33,13 @@ public abstract class MinervaRepo<T> {
 
 	@Autowired
 	HttpHeaders headers;
-	
+
 	private Class<T> clazz;
-	
+
 	public MinervaRepo(Class<T> clazz) {
 		this.clazz = clazz;
 	}
-	
+
 	public Collection<T> getAll(String indexName) {
 
 		String getUrl = esUrl + "/" + indexName + "/_doc/_search/?size=1000";
@@ -47,9 +47,9 @@ public abstract class MinervaRepo<T> {
 		log.info(esUrl);
 
 		ResponseEntity<String> response = restTemplate.getForEntity(getUrl, String.class);
-		
+
 		log.info(response.getBody());
-		
+
 		ObjectMapper mapper1 = new ObjectMapper();
 		Map<String, Object> responseBodyMap = new HashMap<>();
 		try {
@@ -67,7 +67,7 @@ public abstract class MinervaRepo<T> {
 //			T ticket = mapper2.map(map.get("_source"), T.);
 //			resultList.add(ticket);
 //		}
-		
+
 		resultList = this.listMapToListObject(dataList);
 
 		log.info("getAll method response : " + response);
@@ -75,14 +75,21 @@ public abstract class MinervaRepo<T> {
 		return resultList;
 
 	}
-	
+
 	private Collection<T> listMapToListObject(List<Map<String, Object>> dataList) {
 		List<T> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
+		int flag = 0;
 		for (Map<String, Object> map : dataList) {
 			T ticket = mapper2.map(map.get("_source"), clazz);
 			resultList.add(ticket);
+			System.out.println(flag++);
 		}
 		return resultList;
+	}
+
+	private boolean checkData(String data) {
+		ObjectMapper mapper1 = new ObjectMapper();
+		T responseBodyMap = mapper1.readValue(data, clazz.getClass());
 	}
 }
