@@ -3,6 +3,7 @@ package org.cmsideproject.minerva.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.cmsideproject.minerva.repo.TicketSumaryRepo;
 import org.cmsideproject.minerva.service.TicketSumaryService;
@@ -67,11 +68,18 @@ public class MineraController {
 	 * Get 1000 datas from certain index.
 	 * @param index
 	 * @return if there is data in certain index then return data value; otherwise return empty arraylist.
+	 * @throws ElasticSearchRequestException 
 	 */
 	@RequestMapping(value = "minerva/get/{index}", method = RequestMethod.GET)
 	public List<TicketSumaryDTO> getAll(@PathVariable("index") String index) {
 
-		List<TicketSumaryDTO> reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(index);
+		String returnMsg = "";
+		List<TicketSumaryDTO> reponse = null;
+		try {
+			reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(index);
+		} catch (ElasticSearchRequestException e) {
+			System.out.println("111");
+		}
 //		List<TicketSumaryDTO> reponse = ticketSumaryService.getAll(index);
 //
 //		if (StringUtils.isEmpty(reponse)) {

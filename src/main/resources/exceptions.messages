@@ -1,0 +1,5 @@
+000 : General Error
+
+100 : Fail to parse String to [{0}]
+
+101 : Fail to get response from elasticsearch server url : [{0}]

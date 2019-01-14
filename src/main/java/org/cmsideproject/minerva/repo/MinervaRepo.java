@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,15 +44,27 @@ public abstract class MinervaRepo<T> {
 		this.clazz = clazz;
 	}
 
-	public Collection<T> getAll(String indexName) {
+	/**
+	 * Get data from elasticsearch by index name.
+	 * @param indexName
+	 * @return if there is any data in the elasticsearch server than return list of data object ; otherwise return empty collection. 
+	 * @throws ElasticSearchRequestException 
+	 */
+	public Collection<T> getAll(String indexName) throws ElasticSearchRequestException {
 
 		String getUrl = esUrl + "/" + indexName + "/_doc/_search/?size=1000";
 
-		log.info(esUrl);
+		log.info("\n GetAll data from \n Index : [{}] \n Url : [{}]", indexName, esUrl);
+		ResponseEntity<String> response = null;
+		try {
+			response = restTemplate.getForEntity(getUrl, String.class);
+		} catch (HttpClientErrorException e) {
+			throw new ElasticSearchRequestException(getUrl, e);
+		}
+		
+		
 
-		ResponseEntity<String> response = restTemplate.getForEntity(getUrl, String.class);
-
-		log.info(response.getBody());
+		log.info("\n Respose code: [{}] \n Response body: [{}]", response.getStatusCode(), response.getBody());
 
 		ObjectMapper mapper1 = new ObjectMapper();
 		Map<String, Object> responseBodyMap = new HashMap<>();
@@ -83,25 +97,6 @@ public abstract class MinervaRepo<T> {
 				new HttpEntity<>(insertData, headers), String.class);
 
 		System.out.println(test);
-	}
-
-	private Collection<T> listMapToListObject(List<Map<String, Object>> dataList) {
-		List<T> resultList = new ArrayList<>();
-		ModelMapper mapper2 = new ModelMapper();
-		for (Map<String, Object> map : dataList) {
-			T ticket = mapper2.map(map.get("_source"), clazz);
-			resultList.add(ticket);
-		}
-		return resultList;
-	}
-
-	private boolean checkInputDataFormat(String inputData) {
-		if (StringUtils.isEmpty(inputData)) {
-			return false;
-		}
-
-		T ticket = new ModelMapper().map(inputData, clazz);
-		return true;
 	}
 
 	public void update(String indexName, String updateData, String jiraId) {
@@ -137,5 +132,26 @@ public abstract class MinervaRepo<T> {
 		ResponseEntity<String> response = restTemplate.postForEntity(url.toString(),
 				new HttpEntity<>(updateJson, headers), String.class);
 		log.info(response.getBody());
+	}
+
+	private Collection<T> listMapToListObject(List<Map<String, Object>> dataList) {
+		List<T> resultList = new ArrayList<>();
+		ModelMapper mapper2 = new ModelMapper();
+		int i = 0;
+		for (Map<String, Object> map : dataList) {
+			T ticket = mapper2.map(map.get("_source"), clazz);
+			System.out.println(i++);
+			resultList.add(ticket);
+		}
+		return resultList;
+	}
+
+	private boolean checkInputDataFormat(String inputData) {
+		if (StringUtils.isEmpty(inputData)) {
+			return false;
+		}
+
+		T ticket = new ModelMapper().map(inputData, clazz);
+		return true;
 	}
 }
