@@ -48,12 +48,14 @@ public abstract class MinervaRepo<T> {
 
 	/**
 	 * Get data from elasticsearch by index name.
+	 * 
 	 * @param indexName
-	 * @return if there is any data in the elasticsearch server than return list of data object ; otherwise return empty collection. 
-	 * @throws ElasticSearchRequestException 
-	 * @throws DTOParseFailException 
+	 * @return if there is any data in the elasticsearch server than return list of
+	 *         data object ; otherwise return empty collection.
+	 * @throws ElasticSearchRequestException
+	 * @throws DTOParseFailException
 	 */
-	public Collection<T> getAll(String indexName) throws ElasticSearchRequestException, DTOParseFailException {
+	public Collection<T> getAllByIndex(String indexName) throws ElasticSearchRequestException, DTOParseFailException {
 
 		String getUrl = esUrl + "/" + indexName + "/_doc/_search/?size=1000";
 
@@ -64,8 +66,6 @@ public abstract class MinervaRepo<T> {
 		} catch (HttpClientErrorException e) {
 			throw new ElasticSearchRequestException(getUrl, e);
 		}
-		
-		
 
 		log.info("\n Respose code: [{}] \n Response body: [{}]", response.getStatusCode(), response.getBody());
 
@@ -82,7 +82,8 @@ public abstract class MinervaRepo<T> {
 
 		resultList = this.listMapToListObject(dataList);
 
-		log.info("\n GetAll data from \n Index : [{}] \n Url : [{}] \n response body : [{}]", indexName, esUrl, resultList);
+		log.info("\n GetAll data from \n Index : [{}] \n Url : [{}] \n response body : [{}]", indexName, esUrl,
+				resultList);
 
 		return resultList;
 
@@ -111,13 +112,7 @@ public abstract class MinervaRepo<T> {
 		StringBuilder url = new StringBuilder(esUrl);
 		url.append('/').append(indexName).append('/').append("_update_by_query");
 
-		ObjectMapper mopper = new ObjectMapper();
 		Map<String, String> updateDataMap = new HashMap<>();
-		try {
-			updateDataMap = mopper.readValue(updateData, Map.class);
-		} catch (IOException e) {
-			throw new DTOParseFailException("update from " + indexName + " error", e);
-		}
 
 		String updateStrTemplate = "";
 		for (Map.Entry map : updateDataMap.entrySet()) {
@@ -132,6 +127,61 @@ public abstract class MinervaRepo<T> {
 				new HttpEntity<>(updateJson, headers), String.class);
 		log.info(response.getBody());
 	}
+
+	/**
+	 * Get data from elasticsearch by index name.
+	 * 
+	 * @param indexName
+	 * @return if there is any data in the elasticsearch server than return list of
+	 *         data object ; otherwise return empty collection.
+	 * @throws ElasticSearchRequestException
+	 * @throws DTOParseFailException
+	 */
+	public Collection<T> getAll(String indexName, String queryIndex, boolean fuzzyIndex)
+			throws ElasticSearchRequestException, DTOParseFailException {
+
+		
+		if (fuzzyIndex && !indexName.contains("*")) {
+			indexName += "*";
+		}
+
+		String getUrl = esUrl + "/" + indexName + "/_search";
+
+		String updateJson = "{\r\n" + "  \"query\": { \r\n" + "    \"match\": \r\n { " + queryIndex + "    }\r\n"
+				+ "  }\r\n}";
+
+		log.info("URL : [{}] \n Update Json : [{}]", getUrl.toString(), updateJson);
+		ResponseEntity<String> response = restTemplate.postForEntity(getUrl.toString(),
+				new HttpEntity<>(updateJson, headers), String.class);
+
+		log.info("\n Respose code: [{}] \n Response body: [{}]", response.getStatusCode(), response.getBody());
+
+		ObjectMapper mapper1 = new ObjectMapper();
+		Map<String, Object> responseBodyMap = new HashMap<>();
+		try {
+			responseBodyMap = mapper1.readValue(response.getBody(), Map.class);
+		} catch (IOException e) {
+			throw new DTOParseFailException("getAll from " + indexName + " error", e);
+		}
+		Collection<T> resultList = new ArrayList<>();
+		Map responseHits = (Map) responseBodyMap.get("hits");
+		List<Map<String, Object>> dataList = (List<Map<String, Object>>) responseHits.get("hits");
+
+		resultList = this.listMapToListObject(dataList);
+
+		log.info("\n GetAll data from \n Index : [{}] \n Url : [{}] \n response body : [{}]", indexName, esUrl,
+				resultList);
+
+		return resultList;
+
+	}
+	
+	public boolean hasDataInIndex(String indexName, String queryIndex) throws ElasticSearchRequestException, DTOParseFailException {
+		Collection<T> collection = this.getAll(indexName, queryIndex, false);
+		
+		return collection == null || collection.size()==0 ? false : true;
+	}
+	
 
 	private Collection<T> listMapToListObject(List<Map<String, Object>> dataList) {
 		List<T> resultList = new ArrayList<>();
@@ -152,5 +202,20 @@ public abstract class MinervaRepo<T> {
 
 		T ticket = new ModelMapper().map(inputData, clazz);
 		return true;
+	}
+
+	private Map stringToMap(String data) throws DTOParseFailException {
+		ObjectMapper mopper = new ObjectMapper();
+		Map<String, String> updateDataMap = new HashMap<>();
+		try {
+			updateDataMap = mopper.readValue(data, Map.class);
+		} catch (IOException e) {
+			throw new DTOParseFailException("update from " + "" + " error", e);
+		}
+		return updateDataMap;
+	}
+
+	private String mapToString(Map<String, String> dataMap) {
+		return new ModelMapper().map(dataMap, String.class);
 	}
 }

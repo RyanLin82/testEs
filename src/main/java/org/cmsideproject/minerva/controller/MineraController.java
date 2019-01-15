@@ -33,7 +33,6 @@ public class MineraController {
 	@RequestMapping(value = "minerva/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponseMsg postIndex(@PathVariable("index") String index, @RequestBody String data) {
 
-
 		String resMsg = "";
 		String resCode = "";
 		List<TicketSumaryDTO> reponse = null;
@@ -62,17 +61,17 @@ public class MineraController {
 	 * Get 1000 datas from certain index.
 	 * 
 	 * @param index
-	 * @return if there is data in certain index then return data value;
-	 *         otherwise return empty arraylist.
+	 * @return if there is data in certain index then return data value; otherwise
+	 *         return empty arraylist.
 	 * @throws ElasticSearchRequestException
 	 */
 	@RequestMapping(value = "minerva/get/{index}", method = RequestMethod.GET)
-	public MinervaResponseMsg getAll(@PathVariable("index") String index) {
+	public MinervaResponseMsg getAllByIndex(@PathVariable("index") String index) {
 		String resMsg = "";
 		String resCode = "";
 		List<TicketSumaryDTO> reponse = null;
 		try {
-			reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(index);
+			reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAllByIndex(index);
 			resMsg = "success";
 			resCode = "1";
 		} catch (ElasticSearchRequestException e) {
@@ -111,6 +110,32 @@ public class MineraController {
 			ticketSumaryRepo.update(indexName, data, jiraNum);
 			resMsg = "success";
 			resCode = "1";
+		} catch (DTOParseFailException e) {
+			resCode = e.getCode();
+			resMsg = e.getMessage();
+		} catch (Exception e) {
+			resMsg = "error";
+			resCode = "666";
+		}
+		MinervaResponseMsg resJson = new MinervaResponseMsg.MinervaResponseMsgBuilder().setErrorMsg(resMsg)
+				.setResponseCode(resCode).setResponseObj(reponse).build();
+
+		return resJson;
+
+	}
+
+	@RequestMapping(value = "minerva/get/all/{index}", method = RequestMethod.POST)
+	public MinervaResponseMsg getAll(@PathVariable("index") String index, @RequestBody String data) {
+		String resMsg = "";
+		String resCode = "";
+		List<TicketSumaryDTO> reponse = null;
+		try {
+			reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(index, data, true);
+			resMsg = "success";
+			resCode = "1";
+		} catch (ElasticSearchRequestException e) {
+			resCode = e.getCode();
+			resMsg = e.getMessage();
 		} catch (DTOParseFailException e) {
 			resCode = e.getCode();
 			resMsg = e.getMessage();
