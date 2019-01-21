@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
-import org.cmsideproject.minerva.entity.MinervaResponseMsg;
+import org.cmsideproject.minerva.entity.MinervaResponse;
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.cmsideproject.minerva.repo.TicketSumaryRepo;
+import org.cmsideproject.miverva.service.JiraTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,7 @@ public class MineraController {
 	// private Logger log = Logger.getLogger(this.getClass());
 
 	@Autowired
-	TicketSumaryRepo ticketSumaryRepo;
+	JiraTicketService jiraTicketService;
 
 	/**
 	 * Insert datas into certain index.
@@ -31,27 +32,21 @@ public class MineraController {
 	 * @return
 	 */
 	@RequestMapping(value = "minerva/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponseMsg postIndex(@PathVariable("index") String index, @RequestBody String data) {
+	public MinervaResponse postIndex(@PathVariable("index") String index, @RequestBody String data) {
 
-		String resMsg = "";
-		String resCode = "";
+		String msg = "";
+		String status = "";
 		List<TicketSumaryDTO> reponse = null;
 		try {
-			ticketSumaryRepo.post(index, data);
-			resMsg = "success";
-			resCode = "1";
-		} catch (ElasticSearchRequestException e) {
-			resCode = e.getCode();
-			resMsg = e.getMessage();
-		} catch (DTOParseFailException e) {
-			resCode = e.getCode();
-			resMsg = e.getMessage();
+			jiraTicketService.add(index, data);
+			msg = "success";
+			status = "1";
 		} catch (Exception e) {
-			resMsg = "error";
-			resCode = "666";
+			msg = "error";
+			status = "666";
 		}
-		MinervaResponseMsg resJson = new MinervaResponseMsg.MinervaResponseMsgBuilder().setErrorMsg(resMsg)
-				.setResponseCode(resCode).setResponseObj(reponse).build();
+		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
+				.build();
 
 		return resJson;
 
@@ -66,27 +61,26 @@ public class MineraController {
 	 * @throws ElasticSearchRequestException
 	 */
 	@RequestMapping(value = "minerva/get/{index}", method = RequestMethod.GET)
-	public MinervaResponseMsg getAllByIndex(@PathVariable("index") String index) {
-		String resMsg = "";
-		String resCode = "";
+	public MinervaResponse getAllByIndex(@PathVariable("index") String index) {
+		String msg = "";
+		String status = "";
 		List<TicketSumaryDTO> reponse = null;
 		try {
-			reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAllByIndex(index);
-			resMsg = "success";
-			resCode = "1";
+			reponse = (List<TicketSumaryDTO>) jiraTicketService.getAll(index);
+			msg = "success";
+			status = "1";
 		} catch (ElasticSearchRequestException e) {
-			resCode = e.getCode();
-			resMsg = e.getMessage();
+			status = e.getCode();
+			msg = e.getMessage();
 		} catch (DTOParseFailException e) {
-			resCode = e.getCode();
-			resMsg = e.getMessage();
+			status = e.getCode();
+			msg = e.getMessage();
 		} catch (Exception e) {
-			resMsg = "error";
-			resCode = "666";
+			msg = "error";
+			status = "666";
 		}
-		MinervaResponseMsg resJson = new MinervaResponseMsg.MinervaResponseMsgBuilder().setErrorMsg(resMsg)
-				.setResponseCode(resCode).setResponseObj(reponse).build();
-
+		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
+				.build();
 		return resJson;
 
 	}
@@ -99,53 +93,75 @@ public class MineraController {
 	 * @return
 	 */
 	@RequestMapping(value = "minerva/update/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponseMsg updateDataByJiraNum(@PathVariable("index") String indexName, @RequestBody String data,
+	public MinervaResponse updateDataByJiraNum(@PathVariable("index") String indexName, @RequestBody String data,
 			@RequestParam(value = "jiraNum") String jiraNum) {
 
 		// ticketSumaryService.update(indexName, data, jiraNum);
-		String resMsg = "";
-		String resCode = "";
+		String msg = "";
+		String status = "";
 		List<TicketSumaryDTO> reponse = null;
 		try {
-			ticketSumaryRepo.update(indexName, data, jiraNum);
-			resMsg = "success";
-			resCode = "1";
+			jiraTicketService.update(indexName, data, jiraNum);
+			msg = "success";
+			status = "1";
 		} catch (DTOParseFailException e) {
-			resCode = e.getCode();
-			resMsg = e.getMessage();
+			status = e.getCode();
+			msg = e.getMessage();
 		} catch (Exception e) {
-			resMsg = "error";
-			resCode = "666";
+			msg = "error";
+			status = "666";
 		}
-		MinervaResponseMsg resJson = new MinervaResponseMsg.MinervaResponseMsgBuilder().setErrorMsg(resMsg)
-				.setResponseCode(resCode).setResponseObj(reponse).build();
-
+		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
+				.build();
 		return resJson;
 
 	}
 
 	@RequestMapping(value = "minerva/get/all/{index}", method = RequestMethod.POST)
-	public MinervaResponseMsg getAll(@PathVariable("index") String index, @RequestBody String data) {
-		String resMsg = "";
-		String resCode = "";
+	public MinervaResponse getAll(@PathVariable("index") String index, @RequestBody String data) {
+		String msg = "";
+		String status = "";
 		List<TicketSumaryDTO> reponse = null;
 		try {
-			reponse = (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(index, data, true);
-			resMsg = "success";
-			resCode = "1";
-		} catch (ElasticSearchRequestException e) {
-			resCode = e.getCode();
-			resMsg = e.getMessage();
+			reponse = (List<TicketSumaryDTO>) jiraTicketService.getAll(index, data, true);
+			msg = "success";
+			status = "1";
 		} catch (DTOParseFailException e) {
-			resCode = e.getCode();
-			resMsg = e.getMessage();
+			status = e.getCode();
+			msg = e.getMessage();
 		} catch (Exception e) {
-			resMsg = "error";
-			resCode = "666";
+			msg = "error";
+			status = "666";
 		}
-		MinervaResponseMsg resJson = new MinervaResponseMsg.MinervaResponseMsgBuilder().setErrorMsg(resMsg)
-				.setResponseCode(resCode).setResponseObj(reponse).build();
+		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
+				.build();
+		return resJson;
 
+	}
+
+	/**
+	 * Insert datas into certain index.
+	 * 
+	 * @param index
+	 * @param data
+	 * @return
+	 */
+	@RequestMapping(value = "minerva/delete/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse delete(@PathVariable("index") String index, @RequestBody String conditions) {
+
+		String msg = "";
+		String status = "";
+		List<TicketSumaryDTO> reponse = null;
+		try {
+			jiraTicketService.delete(index, conditions);
+			msg = "success";
+			status = "1";
+		} catch (Exception e) {
+			msg = "error";
+			status = "666";
+		}
+		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
+				.build();
 		return resJson;
 
 	}

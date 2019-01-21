@@ -11,8 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
-import org.cmsideproject.exception.MinervaException;
-import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,7 +53,7 @@ public abstract class MinervaRepo<T> {
 	 * @throws ElasticSearchRequestException
 	 * @throws DTOParseFailException
 	 */
-	public Collection<T> getAllByIndex(String indexName) throws ElasticSearchRequestException, DTOParseFailException {
+	public Collection<T> getAll(String indexName) throws ElasticSearchRequestException, DTOParseFailException {
 
 		String getUrl = esUrl + "/" + indexName + "/_doc/_search/?size=1000";
 
@@ -89,7 +87,7 @@ public abstract class MinervaRepo<T> {
 
 	}
 
-	public void post(String indexName, String insertData) throws Exception {
+	public boolean add(String indexName, String insertData) {
 
 		if (!checkInputDataFormat(insertData)) {
 			log.info("post error\n index name : [{}] \n insertData : [{}]", indexName, insertData);
@@ -99,7 +97,34 @@ public abstract class MinervaRepo<T> {
 		ResponseEntity<String> test = restTemplate.postForEntity(esUrl + "/" + indexName + "/_doc/",
 				new HttpEntity<>(insertData, headers), String.class);
 
-		System.out.println(test);
+		if (test != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public void delete(String indexName, String conditions) throws DTOParseFailException {
+
+		String url = esUrl + "/" + indexName + "/_delete_by_query";
+
+		if (!checkInputDataFormat(conditions)) {
+			log.info("delete error\n index name : [{}] \n conditions : [{}]", indexName, conditions);
+//			throw new DTOParseFailException("getAll from " + indexName + " error");
+		}
+		Map<String, String> conditionsMap = this.stringToMap(conditions);
+
+		String formatConditions = "";
+		for (Map.Entry<String, String> map : conditionsMap.entrySet()) {
+			formatConditions = "\"" + map.getKey() + ".keyword = '" + map.getValue() + "'\";";
+		}
+
+		String deleteJson = "{\r\n" + "  \"query\": { \r\n" + "    \"match\": {\r\n" + formatConditions + "    }\r\n"
+				+ "  }\r\n" + "}";
+
+		log.info("URL : [{}] \n Delete Json : [{}]", esUrl.toString(), deleteJson);
+		ResponseEntity<String> test = restTemplate.postForEntity(esUrl + "/" + indexName + "/_delete_by_query/",
+				new HttpEntity<>(formatConditions, headers), String.class);
+
 	}
 
 	public void update(String indexName, String updateData, String jiraId) throws Exception {
@@ -137,10 +162,8 @@ public abstract class MinervaRepo<T> {
 	 * @throws ElasticSearchRequestException
 	 * @throws DTOParseFailException
 	 */
-	public Collection<T> getAll(String indexName, String queryIndex, boolean fuzzyIndex)
-			throws ElasticSearchRequestException, DTOParseFailException {
+	public Collection<T> getAll(String indexName, String queryIndex, boolean fuzzyIndex) throws DTOParseFailException {
 
-		
 		if (fuzzyIndex && !indexName.contains("*")) {
 			indexName += "*";
 		}
@@ -151,6 +174,7 @@ public abstract class MinervaRepo<T> {
 				+ "  }\r\n}";
 
 		log.info("URL : [{}] \n Update Json : [{}]", getUrl.toString(), updateJson);
+
 		ResponseEntity<String> response = restTemplate.postForEntity(getUrl.toString(),
 				new HttpEntity<>(updateJson, headers), String.class);
 
@@ -175,21 +199,18 @@ public abstract class MinervaRepo<T> {
 		return resultList;
 
 	}
-	
-	public boolean hasDataInIndex(String indexName, String queryIndex) throws ElasticSearchRequestException, DTOParseFailException {
+
+	public boolean hasDataInIndex(String indexName, String queryIndex) throws DTOParseFailException {
 		Collection<T> collection = this.getAll(indexName, queryIndex, false);
-		
-		return collection == null || collection.size()==0 ? false : true;
+
+		return collection == null || collection.isEmpty() ? false : true;
 	}
-	
 
 	private Collection<T> listMapToListObject(List<Map<String, Object>> dataList) {
 		List<T> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
-		int i = 0;
 		for (Map<String, Object> map : dataList) {
 			T ticket = mapper2.map(map.get("_source"), clazz);
-			System.out.println(i++);
 			resultList.add(ticket);
 		}
 		return resultList;
