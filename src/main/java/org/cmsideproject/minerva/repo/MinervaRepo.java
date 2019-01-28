@@ -13,6 +13,8 @@ import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -56,9 +58,11 @@ public abstract class MinervaRepo<T> {
 	 * @throws ErrorInputException
 	 * @throws ElasticSearchRequestException
 	 */
-	public void add(String indexName, String insertData) throws ErrorInputException, ElasticSearchRequestException {
+	public void add(String indexName, String insertData) throws ElasticSearchRequestException, ErrorInputException {
 
-		this.checkInputDataFormat(insertData);
+//		this.checkInputDataFormat(insertData);
+		
+		this.validateInputDataMappingEntityAllField(insertData);
 
 		StringBuilder strbuilder = new StringBuilder();
 		strbuilder.append(esUrl).append("/").append(indexName).append("/_doc/");
@@ -69,12 +73,12 @@ public abstract class MinervaRepo<T> {
 				new HttpEntity<>(insertData, headers), String.class);
 
 		log.info("\n add data to \n response : [{}] ", response);
-		
-		//TODO HTTP ERROR EXCEPTION
 
-		if (response == null) {
-			throw new ElasticSearchRequestException(insertData, "Insert Error");
-		}
+		// TODO HTTP ERROR EXCEPTION
+
+//		if (response == null) {
+//			throw new ElasticSearchRequestException(insertData, "Insert Error");
+//		}
 	}
 
 	/**
@@ -83,11 +87,12 @@ public abstract class MinervaRepo<T> {
 	 * @param indexName
 	 * @return if there is any data in the elasticsearch server than return list of
 	 *         data object ; otherwise return empty collection.
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
+	 * @throws DTOParseFailException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
-	public Collection<T> getAll(String indexName){
+	public Collection<T> getAll(String indexName) throws DTOParseFailException {
 
 		StringBuilder strbuilder = new StringBuilder();
 		strbuilder.append(esUrl).append("/").append(indexName).append("/_doc/_search/?size=1000");
@@ -95,7 +100,7 @@ public abstract class MinervaRepo<T> {
 		String url = strbuilder.toString();
 
 		log.info("\n GetAll data from \n Index : [{}] \n Url : [{}]", indexName, url);
-		
+
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 //		try {
 //			response = restTemplate.getForEntity(url, String.class);
@@ -107,7 +112,12 @@ public abstract class MinervaRepo<T> {
 
 		ObjectMapper mapper1 = new ObjectMapper();
 		Map<String, Object> responseBodyMap = new HashMap<>();
-		responseBodyMap = mapper1.readValue(response.getBody(), Map.class);
+		try {
+			responseBodyMap = mapper1.readValue(response.getBody(), Map.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			throw new DTOParseFailException("response getbody error", e);
+		}
 //		throw new DTOParseFailException("getAll from " + indexName + " error", e);
 		Collection<T> resultList = new ArrayList<>();
 		Map responseHits = (Map) responseBodyMap.get("hits");
@@ -235,15 +245,34 @@ public abstract class MinervaRepo<T> {
 		return resultList;
 	}
 
-	private void checkInputDataFormat(String inputData) throws ErrorInputException {
+	private void validateInputDataMappingEntityAllField(String inputData){
+//		if (StringUtils.isEmpty(inputData)) {
+//			throw new ErrorInputException(inputData, "input data empty");
+//		}
+
+		ModelMapper mapper2 = new ModelMapper();
+		mapper2.getConfiguration().setSkipNullEnabled(true);
+		T ticket = mapper2.map(inputData, clazz);
+		
+		mapper2.validate();
+		
+	}
+	
+	private void checkInputDataFormat(String inputData) throws ErrorInputException  {
 		if (StringUtils.isEmpty(inputData)) {
 			throw new ErrorInputException(inputData, "input data empty");
 		}
-		T ticket = new ModelMapper().map(inputData, clazz);
+
+		ObjectMapper mapper2 = new ObjectMapper();
+
+		T ticket2;
+		try {
+			ticket2 = mapper2.readValue(inputData, clazz);
+		} catch (IOException e) {
+			throw new ErrorInputException(inputData, "input data mapping entity error");
+		}
 		
-		//TODO ModelMapper PARSE ERROR
-		
-		hasId(ticket);
+		hasId(ticket2);
 	}
 
 	abstract void hasId(T t) throws ErrorInputException;

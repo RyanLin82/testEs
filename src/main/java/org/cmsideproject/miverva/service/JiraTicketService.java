@@ -26,7 +26,7 @@ public class JiraTicketService {
 		ticketSumaryRepo.add(indexName, insertData);
 	}
 
-	public List<TicketSumaryDTO> getAll(String indexName) {
+	public List<TicketSumaryDTO> getAll(String indexName) throws DTOParseFailException {
 		if (StringUtils.isEmpty(indexName)) {
 			return new ArrayList<>();
 		}

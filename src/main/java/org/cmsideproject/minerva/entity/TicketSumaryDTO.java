@@ -346,5 +346,7 @@ public class TicketSumaryDTO {
 		this.type = type;
 	}
 
-
+//	public boolean isEmpty() {
+//		retr
+//	}
 }
