@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class MinervaResponse {
 
-	private String status;
+	private MinervaResponseStatus status;
 
 	private Collection<?> data;
 
@@ -24,11 +24,11 @@ public class MinervaResponse {
 		this.statusCode = builder.statusCode;
 	}
 
-	public String getStatus() {
+	public MinervaResponseStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(MinervaResponseStatus status) {
 		this.status = status;
 	}
 
@@ -63,7 +63,7 @@ public class MinervaResponse {
 
 	public static class MinervaResponseMsgBuilder {
 
-		private String status;
+		private MinervaResponseStatus status;
 
 		private Collection<?> data;
 
@@ -74,7 +74,7 @@ public class MinervaResponse {
 		public MinervaResponseMsgBuilder() {
 		}
 
-		public MinervaResponseMsgBuilder setStatus(String status) {
+		public MinervaResponseMsgBuilder setStatus(MinervaResponseStatus status) {
 			this.status = status;
 			return this;
 		}

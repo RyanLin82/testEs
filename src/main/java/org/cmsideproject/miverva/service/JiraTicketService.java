@@ -27,10 +27,15 @@ public class JiraTicketService {
 	}
 
 	public List<TicketSumaryDTO> getAll(String indexName) throws DTOParseFailException {
-		if (StringUtils.isEmpty(indexName)) {
-			return new ArrayList<>();
-		}
 		return (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(indexName);
+	}
+	
+	public List<TicketSumaryDTO> get(String indexName, String conditions, boolean fuzzyIndex) throws DTOParseFailException {
+		return (List<TicketSumaryDTO>) ticketSumaryRepo.get(indexName, conditions, fuzzyIndex);
+	}
+	
+	public void delete(String indexName, String conditions) throws DTOParseFailException {
+		ticketSumaryRepo.delete(indexName, conditions);
 	}
 
 //	public List<TicketSumaryDTO> getAll(String indexName, String queryIndex, boolean fuzzyIndex)
@@ -47,9 +52,7 @@ public class JiraTicketService {
 //		ticketSumaryRepo.update(indexName, updateData, jiraId);
 //	}
 
-//	public void delete(String indexName, String conditions) throws DTOParseFailException {
-//		ticketSumaryRepo.delete(indexName, conditions);
-//	}
+	
 //
 	public void add(String indexName, String insertData) throws ErrorInputException, ElasticSearchRequestException{
 		ticketSumaryRepo.add(indexName, insertData);

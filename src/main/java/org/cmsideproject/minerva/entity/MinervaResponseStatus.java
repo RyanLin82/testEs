@@ -1,4 +1,4 @@
-package org.cmsideproject.enumList;
+package org.cmsideproject.minerva.entity;
 
 public enum MinervaResponseStatus {
 	success("success"), fail("fail"), error("error");
