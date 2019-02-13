@@ -1,16 +1,15 @@
 package org.cmsideproject.minerva.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
+import org.cmsideproject.log.MinervaLog;
+import org.cmsideproject.log.MinervaLogImp;
 import org.cmsideproject.minerva.entity.MinervaResponse;
-import org.cmsideproject.minerva.entity.MinervaResponseStatus;
-import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.cmsideproject.miverva.service.JiraTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +25,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @RequestMapping("${minerva.api}")
 public class MineraController {
 
-	private Logger log = LogManager.getLogger(this.getClass());
+	private MinervaLog log = new MinervaLogImp(this.getClass());
 
 	@Autowired
 	JiraTicketService jiraTicketService;
@@ -41,66 +40,16 @@ public class MineraController {
 	 * @throws ErrorInputException
 	 */
 	@RequestMapping(value = "minerva/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse postTicketSumary(@PathVariable("index") String index, @RequestBody String data) {
+	public void postTicketSumary(@PathVariable("index") String index, @RequestBody String data)
+			throws ErrorInputException, ElasticSearchRequestException {
 
-		String msg = "";
-		String statusCode = "";
-		MinervaResponseStatus status = null;
-		List<TicketSumaryDTO> reponse = null;
-		try {
-			jiraTicketService.add(index, data);
-			statusCode = "100";
-			status = MinervaResponseStatus.success;
-			msg = "success";
-		} catch (ErrorInputException | ElasticSearchRequestException e) {
-			statusCode = e.getCode();
-			msg = e.getMessage();
-			status = MinervaResponseStatus.fail;
-			log.info("" + e);
-			e.printStackTrace();
-		} finally {
-			if (status == null) {
-				status = MinervaResponseStatus.error;
-			}
-			log.info("\n GetAll data from \n Index : [{}] \n status : [{}] \n message : [{}]", index,
-					status.getStatus(), msg);
-		}
-
-		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
-				.setStatusCode(statusCode).setData(reponse).build();
-
-		return resJson;
+		jiraTicketService.add(index, data);
 
 	}
 
 	@RequestMapping(value = "get/ticketSumary/{index}", method = RequestMethod.POST)
-	public MinervaResponse get(@PathVariable("index") String index, @RequestBody String data) {
-		String msg = "";
-		String statusCode = "";
-		MinervaResponseStatus status = null;
-		List<TicketSumaryDTO> reponse = null;
-		try {
-			reponse = (List<TicketSumaryDTO>) jiraTicketService.get(index, data, false);
-			statusCode = "100";
-			status = MinervaResponseStatus.success;
-			msg = "success";
-		} catch (DTOParseFailException e) {
-			statusCode = e.getCode();
-			msg = e.getMessage();
-			status = MinervaResponseStatus.fail;
-			log.info("" + e.getStackTrace());
-		} finally {
-			if (status == null) {
-				status = MinervaResponseStatus.error;
-			}
-			log.info("\n GetAll data from \n Index : [{}] \n status code: [{}] \n message : [{}]", index, statusCode,
-					msg);
-		}
-
-		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
-				.setStatusCode(statusCode).setData(reponse).build();
-		return resJson;
-
+	public void get(@PathVariable("index") String index, @RequestBody String data) throws DTOParseFailException {
+		jiraTicketService.get(index, data, false);
 	}
 
 	/**
@@ -109,39 +58,15 @@ public class MineraController {
 	 * @param index
 	 * @return if there is data in certain index then return data value; otherwise
 	 *         return empty arraylist.
+	 * @throws DTOParseFailException
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 * @throws ElasticSearchRequestException
 	 */
 	@RequestMapping(value = "get/ticketSumarys/{index}", method = RequestMethod.GET)
-	public MinervaResponse getAllByIndex(@PathVariable("index") String index)
-			throws JsonParseException, JsonMappingException, IOException {
-		String msg = "";
-		String statusCode = "";
-		MinervaResponseStatus status = null;
-		List<TicketSumaryDTO> reponse = null;
-		try {
-			reponse = (List<TicketSumaryDTO>) jiraTicketService.getAll(index);
-			statusCode = "100";
-			status = MinervaResponseStatus.success;
-			msg = "success";
-		} catch (DTOParseFailException e) {
-			statusCode = e.getCode();
-			msg = e.getMessage();
-			status = MinervaResponseStatus.fail;
-			log.info("" + e.getStackTrace());
-		} finally {
-			if (status == null) {
-				status = MinervaResponseStatus.error;
-			}
-			log.info("\n GetAll data from \n Index : [{}] \n status code: [{}] \n message : [{}]", index, statusCode,
-					msg);
-		}
-
-		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatus(status)
-				.setStatusCode(statusCode).setData(reponse).build();
-		return resJson;
+	public void getAllByIndex(@PathVariable("index") String index) throws DTOParseFailException {
+		jiraTicketService.getAll(index);
 
 	}
 
@@ -203,4 +128,80 @@ public class MineraController {
 //		return resJson;
 //
 //	}
+
+	/**
+	 * Get 1000 datas from certain index.
+	 * 
+	 * @param index
+	 * @return if there is data in certain index then return data value; otherwise
+	 *         return empty arraylist.
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
+	 * @throws ElasticSearchRequestException
+	 */
+	@RequestMapping(value = "get/ticketSumarys/111", method = RequestMethod.GET)
+	public MinervaResponse test2222() {
+
+		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage("test2222").build();
+		return resJson;
+
+	}
+
+	/**
+	 * Get 1000 datas from certain index.
+	 * 
+	 * @param index
+	 * @return if there is data in certain index then return data value; otherwise
+	 *         return empty arraylist.
+	 * @throws DTOParseFailException
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
+	 * @throws ElasticSearchRequestException
+	 */
+	@RequestMapping(value = "get/ticketSumarys/dto", method = RequestMethod.GET)
+	public MinervaResponse testDto() throws DTOParseFailException {
+
+		throw new DTOParseFailException("ttt", null);
+
+	}
+
+	/**
+	 * Get 1000 datas from certain index.
+	 * 
+	 * @param index
+	 * @return if there is data in certain index then return data value; otherwise
+	 *         return empty arraylist.
+	 * @throws DTOParseFailException
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
+	 * @throws ElasticSearchRequestException
+	 */
+	@RequestMapping(value = "get/ticketSumarys/err", method = RequestMethod.GET)
+	public MinervaResponse testErrorInputException() throws ErrorInputException {
+
+		throw new ErrorInputException("ErrorInputException", "ErrorInputException");
+
+	}
+
+	/**
+	 * Get 1000 datas from certain index.
+	 * 
+	 * @param index
+	 * @return if there is data in certain index then return data value; otherwise
+	 *         return empty arraylist.
+	 * @throws DTOParseFailException
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
+	 * @throws ElasticSearchRequestException
+	 */
+	@RequestMapping(value = "get/ticketSumarys/tt", method = RequestMethod.GET)
+	public MinervaResponse tt() throws ErrorInputException {
+
+		return new MinervaResponse.MinervaResponseMsgBuilder().setMessage("tt").setStatusCode("tt").build();
+
+	}
 }
