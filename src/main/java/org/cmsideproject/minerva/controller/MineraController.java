@@ -1,6 +1,7 @@
 package org.cmsideproject.minerva.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +11,7 @@ import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLog;
 import org.cmsideproject.log.MinervaLogImp;
 import org.cmsideproject.minerva.entity.MinervaResponse;
+import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.cmsideproject.miverva.service.JiraTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,7 @@ public class MineraController {
 
 	@Autowired
 	JiraTicketService jiraTicketService;
+	
 
 	/**
 	 * Insert datas into certain index.
@@ -40,16 +43,19 @@ public class MineraController {
 	 * @throws ErrorInputException
 	 */
 	@RequestMapping(value = "minerva/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public void postTicketSumary(@PathVariable("index") String index, @RequestBody String data)
+	public MinervaResponse postTicketSumary(@PathVariable("index") String index, @RequestBody String data)
 			throws ErrorInputException, ElasticSearchRequestException {
-
+		MinervaResponse minervaResponse = new MinervaResponse();
 		jiraTicketService.add(index, data);
+		return minervaResponse;
 
 	}
 
 	@RequestMapping(value = "get/ticketSumary/{index}", method = RequestMethod.POST)
-	public void get(@PathVariable("index") String index, @RequestBody String data) throws DTOParseFailException {
+	public MinervaResponse get(@PathVariable("index") String index, @RequestBody String data) throws DTOParseFailException {
+		MinervaResponse minervaResponse = new MinervaResponse();
 		jiraTicketService.get(index, data, false);
+		return minervaResponse;
 	}
 
 	/**
@@ -65,9 +71,11 @@ public class MineraController {
 	 * @throws ElasticSearchRequestException
 	 */
 	@RequestMapping(value = "get/ticketSumarys/{index}", method = RequestMethod.GET)
-	public void getAllByIndex(@PathVariable("index") String index) throws DTOParseFailException {
-		jiraTicketService.getAll(index);
-
+	public MinervaResponse getAllByIndex(@PathVariable("index") String index) throws DTOParseFailException {
+		MinervaResponse minervaResponse = new MinervaResponse();
+		List<TicketSumaryDTO> response = jiraTicketService.getAll(index);
+		minervaResponse.setData(response);
+		return minervaResponse;
 	}
 
 //	/**

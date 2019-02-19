@@ -1,5 +1,7 @@
 package org.cmsideproject.config;
 
+import java.util.Collection;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
@@ -55,12 +57,14 @@ public class MinervaAccessAspect {
 		MinervaResponseStatus status = null;
 		String msg = null;
 		String statusCode = null;
+		Object data = null;
 		System.out.println("****LoggingAspect.logAroundGetEmployee() : " + joinPoint.getSignature().getName()
 				+ ": Before Method Execution");
 		try {
-			joinPoint.proceed();
+			Object test = joinPoint.proceed();
 			statusCode = "100";
 			status = MinervaResponseStatus.success;
+			data = joinPoint.getArgs();
 			msg = "success";
 		} catch (ErrorInputException | ElasticSearchRequestException e) {
 			// TODO Auto-generated catch block
@@ -83,29 +87,17 @@ public class MinervaAccessAspect {
 			logger.info("" + e.getStackTrace());
 			e.printStackTrace();
 		} finally {
-			resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatusCode(statusCode).setStatus(status).build();
+			resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage(msg).setStatusCode(statusCode).setStatus(status).setData((Collection<?>) data).build();
+			System.out.println("****2222222 : " + joinPoint.getSignature().getName()
+					+ ": After Method Execution");
 		}
-		System.out.println("****LoggingAspect.logAroundGetEmployee() : " + joinPoint.getSignature().getName()
+		System.out.println("****1111111111 : " + joinPoint.getSignature().getName()
 				+ ": After Method Execution");
 
 		
 		return resJson;
 	}
 
-//	@AfterReturning(pointcut = "execution(* org.cmsideproject.minerva.controller.*.*(..))", returning = "result")
-//	public void logAfterReturning(JoinPoint joinPoint, Object result) {
-//		logger.info("\n\n\n\n @AfterReturning\n\n\n\n");
-//		
-//		logger.info(" \nResponse for class : {} ; \nMethod : {} ", joinPoint.getTarget().getClass().getName(),
-//				joinPoint.getSignature().getName());
-//		if (result != null) {
-//			logger.info(" \nResponse value : {}", result.toString());
-//		} else {
-//			logger.info(" \nwith null as return value.");
-//		}
-//		
-//	}
-	
 	@After("execution(* org.cmsideproject.minerva.controller.*.*(..))")
 	public void after2(JoinPoint joinPoint) {
 		// Advice

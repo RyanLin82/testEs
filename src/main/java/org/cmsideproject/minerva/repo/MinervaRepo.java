@@ -31,8 +31,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public abstract class MinervaRepo<T> {
 
-//	private Logger log = LogManager.getLogger(this.getClass());
-	private MinervaLog log = new MinervaLogImp(this.getClass());
+	private Logger log = LogManager.getLogger(this.getClass());
+//	private MinervaLog log = new MinervaLogImp(this.getClass());
 	
 	@Value("${file.directory}")
 	private String esUrl;
@@ -68,9 +68,9 @@ public abstract class MinervaRepo<T> {
 		StringBuilder strbuilder = new StringBuilder();
 		strbuilder.append(esUrl).append("/").append(indexName).append("/_doc/");
 
-		log.TicketInfo(indexName, ticketNumber, this.getClass().getme, url, data);
+//		log.TicketInfo(indexName, ticketNumber, this.getClass().getme, url, data);
 		
-//		log.info("\n add data to \n Index : [{}] \n Url : [{}] \n insert data : [{}]", indexName, esUrl, insertData);
+		log.info("\n add data to \n Index : [{}] \n Url : [{}] \n insert data : [{}]", indexName, esUrl, insertData);
 
 		ResponseEntity<String> response = restTemplate.postForEntity(strbuilder.toString(),
 				new HttpEntity<>(insertData, headers), String.class);
