@@ -25,11 +25,10 @@ public class GetResponse<T> extends Response {
 	}
 	
 	public GetResponse(GetResponseBuilder build) {
-		super(build);
 		this.data = build.data;
 	}
 	
-	public static class GetResponseBuilder<T> extends Response.ResponseBuilder {
+	public static class GetResponseBuilder<T> extends ResponseBuilder<GetResponseBuilder> {
 		private Collection<T> data;
 		
 		public GetResponseBuilder setData(Collection<T> data) {
@@ -37,11 +36,9 @@ public class GetResponse<T> extends Response {
 			return this;
 		}
 		
-		@Override
 		public GetResponse build() {
 			return new GetResponse(this);
 		}
-		
 		
 		public GetResponseBuilder() {
 			super();

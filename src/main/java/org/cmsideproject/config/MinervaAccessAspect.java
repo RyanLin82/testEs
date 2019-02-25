@@ -74,8 +74,7 @@ public class MinervaAccessAspect {
 			logger.info("" + e.getStackTrace());
 			e.printStackTrace();
 		} finally {
-			resJson = new GetResponse.GetResponseBuilder().setMessage(msg).setStatusCode(statusCode)
-					.setStatus(status).build();
+			resJson = new GetResponse.GetResponseBuilder<>().setMessage(msg).
 		}
 
 		return resJson;
