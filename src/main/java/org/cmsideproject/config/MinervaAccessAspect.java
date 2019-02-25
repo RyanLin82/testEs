@@ -16,6 +16,7 @@ import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.GetResponse;
 import org.cmsideproject.minerva.entity.MinervaResponse;
 import org.cmsideproject.minerva.entity.MinervaResponseStatus;
+import org.cmsideproject.minerva.entity.Response;
 import org.springframework.context.annotation.Configuration;
 
 @Aspect
@@ -39,7 +40,7 @@ public class MinervaAccessAspect {
 		logger.info(" \n =======================");
 	}
 
-	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.get*)")
+	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.get*(..))")
 	public GetResponse around(ProceedingJoinPoint joinPoint) {
 		GetResponse resJson = null;
 		MinervaResponseStatus status = null;
@@ -74,7 +75,7 @@ public class MinervaAccessAspect {
 			e.printStackTrace();
 		} finally {
 			resJson = new GetResponse.GetResponseBuilder().setMessage(msg).setStatusCode(statusCode)
-					.setStatus(status).setData((Collection<?>) data).build();
+					.setStatus(status).build();
 		}
 
 		return resJson;

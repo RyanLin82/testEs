@@ -36,6 +36,13 @@ public class GetResponse<T> extends Response {
 			this.data = data;
 			return this;
 		}
+		
+		@Override
+		public GetResponse build() {
+			return new GetResponse(this);
+		}
+		
+		
 		public GetResponseBuilder() {
 			super();
 		}
