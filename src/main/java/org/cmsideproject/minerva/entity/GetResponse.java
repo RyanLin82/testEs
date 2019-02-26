@@ -1,47 +1,47 @@
 package org.cmsideproject.minerva.entity;
 
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Value;
 
-public class GetResponse<T> extends Response {
+public class GetResponse extends Response {
 
 	@Value("${GetResponse.version}")
 	private String putVersion;
 
-	private Collection<T> data;
+	private Object data;
 
 	public GetResponse() {
 		super();
 		this.setVersion(putVersion);
 	}
 
-	public void setData(Collection<T> data) {
+	public void setData(Object data) {
 		this.data = data;
 	}
-	
-	public Collection<T> getData(){
+
+	public Object getData() {
 		return this.data;
 	}
-	
-	public GetResponse(GetResponseBuilder build) {
-		this.data = build.data;
-	}
-	
-	public static class GetResponseBuilder<T> extends ResponseBuilder<GetResponseBuilder> {
-		private Collection<T> data;
-		
-		public GetResponseBuilder setData(Collection<T> data) {
-			this.data = data;
+
+//	public GetResponse(Builder build) {
+//		super(build);
+//		this.data = build.getActual().getData();
+//	}
+
+	public static class Builder extends BaseBuilder<GetResponse, Builder> {
+
+		@Override
+		protected GetResponse getActual() {
+			return new GetResponse();
+		}
+
+		@Override
+		protected Builder getActualBuilder() {
 			return this;
 		}
 		
-		public GetResponse build() {
-			return new GetResponse(this);
-		}
-		
-		public GetResponseBuilder() {
-			super();
+		public Builder data(Object data) {
+			actualClass.setData(data);
+			return this;
 		}
 	}
 }

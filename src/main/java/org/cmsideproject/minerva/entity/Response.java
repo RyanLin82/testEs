@@ -1,6 +1,6 @@
 package org.cmsideproject.minerva.entity;
 
-public class Response {
+public abstract class Response {
 
 	private MinervaResponseStatus status;
 
@@ -9,6 +9,9 @@ public class Response {
 	private String message;
 
 	private String version;
+
+	public Response() {
+	}
 
 	public MinervaResponseStatus getStatus() {
 		return status;
@@ -42,4 +45,43 @@ public class Response {
 		this.version = version;
 	}
 
+	public Response(BaseBuilder builder) {
+		this.message = builder.getActual().getMessage();
+		this.version = builder.getActual().getVersion();
+		this.statusCode = builder.getActual().getStatusCode();
+		this.status = builder.getActual().getStatus();
+	}
+
+	protected static abstract class BaseBuilder<T extends Response, B extends BaseBuilder> {
+		protected T actualClass;
+		protected B actualClassBuilder;
+
+		protected abstract T getActual();
+
+		protected abstract B getActualBuilder();
+
+		protected BaseBuilder() {
+			actualClass = getActual();
+			actualClassBuilder = getActualBuilder();
+		}
+
+		public B statusCode(String statusCode) {
+			actualClass.setStatusCode(statusCode);
+			return actualClassBuilder;
+		}
+
+		public B message(String message) {
+			actualClass.setMessage(message);
+			return actualClassBuilder;
+		}
+
+		public B version(String version) {
+			actualClass.setVersion(version);
+			return actualClassBuilder;
+		}
+
+		public T build() {
+			return actualClass;
+		}
+	}
 }

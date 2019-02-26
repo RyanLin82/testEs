@@ -29,7 +29,7 @@ public class MinervaSumController implements MinervaControllerTemplate {
 	@Override
 	@RequestMapping(value = "minerva/Tickets/getAll", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public GetResponse getAll(@RequestBody String index) throws DTOParseFailException {
-		GetResponse minervaResponse = new GetResponse<TicketSumaryDTO>();
+		GetResponse minervaResponse = new GetResponse();
 		List<TicketSumaryDTO> response = jiraTicketService.getAll(index);
 		
 		minervaResponse.setData(response);
