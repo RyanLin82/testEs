@@ -22,6 +22,7 @@ public class GetResponse extends Response {
 		return this.data;
 	}
 
+	
 //	public GetResponse(Builder build) {
 //		super(build);
 //		this.data = build.getActual().getData();

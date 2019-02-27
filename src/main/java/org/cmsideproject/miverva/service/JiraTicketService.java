@@ -9,6 +9,7 @@ import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
+import org.cmsideproject.minerva.repo.MinervaRepoPersistence;
 import org.cmsideproject.minerva.repo.TicketSumaryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @Service
 public class JiraTicketService {
 
+//	@Autowired
+//	TicketSumaryRepo ticketSumaryRepo;
+	
 	@Autowired
-	TicketSumaryRepo ticketSumaryRepo;
+	MinervaRepoPersistence ticketSumaryRepo;
 
 	public void insertData(String indexName, String insertData) throws ErrorInputException, ElasticSearchRequestException {
 		ticketSumaryRepo.add(indexName, insertData);

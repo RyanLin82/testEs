@@ -14,6 +14,7 @@ import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLog;
 import org.cmsideproject.log.MinervaLogImp;
+import org.cmsideproject.persistence.RestTemplatePersistence;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,23 +30,27 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public abstract class MinervaRepo<T> {
+public abstract class MinervaRepoPersistence<T> {
 
 	private Logger log = LogManager.getLogger(this.getClass());
 	private MinervaLog log1 = new MinervaLogImp(this.getClass());
 	
-	@Value("${file.directory}")
-	private String esUrl;
-
 	@Autowired
-	RestTemplate restTemplate;
+	RestTemplatePersistence rest;
+	
+	RestTemplate restTemplate = rest.getRestTemplate();
+	
+	HttpHeaders headers = rest.getHeaders();
+//	@Autowired
+//	RestTemplate restTemplate;
+//
+//	@Autowired
+//	HttpHeaders headers;
 
-	@Autowired
-	HttpHeaders headers;
-
+	String esUrl = rest.getUrl();
 	private Class<T> clazz;
 
-	public MinervaRepo(Class<T> clazz) {
+	public MinervaRepoPersistence(Class<T> clazz) {
 		this.clazz = clazz;
 	}
 
@@ -314,3 +319,4 @@ public abstract class MinervaRepo<T> {
 		return new ModelMapper().map(dataMap, String.class);
 	}
 }
+
