@@ -13,7 +13,7 @@ public class TicketSumaryRepo extends MinervaRepo<TicketSumaryDTO> {
 
 	@Override
 	void isEmpty(TicketSumaryDTO data) throws ErrorInputException {
-		if (data == null || data.isEmpty()) {
+		if (data == null) {
 			throw new ErrorInputException(data.toString(), "Ticket Number is empty");
 		}
 	}

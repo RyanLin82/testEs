@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>org.cmsideproject</groupId>
+  <artifactId>ESCloudSampleTest</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <name>ESCloudSampleTest Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  
+  <properties>
+		<java.version>1.8</java.version>
+		<spring.version>5.0.7.RELEASE</spring.version>
+		<springdata.elasticsearch.version>3.2.0.BUILD-SNAPSHOT</springdata.elasticsearch.version>
+		<springdata.commons.version>2.2.0.BUILD-SNAPSHOT</springdata.commons.version>
+		<elasticsearch.version>6.4.3</elasticsearch.version>
+		<elasticsearch.client.version>6.4.3</elasticsearch.client.version>
+		<elasticsearch.plugin.version>6.4.3</elasticsearch.plugin.version>
+		<maven-compiler.version>3.6.1</maven-compiler.version>
+		<servlet.version>3.1.0</servlet.version>
+  </properties>
+	
+  <dependencies>
+  		<dependency>
+			<groupId>org.springframework</groupId>
+   		 	<artifactId>spring-core</artifactId>
+    		<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+   		 	<artifactId>spring-webmvc</artifactId>
+    		<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+   		 	<artifactId>spring-data-elasticsearch</artifactId>
+    		<version>${springdata.elasticsearch.version}</version>
+    	</dependency>
+    
+		<dependency>
+    		<groupId>org.elasticsearch</groupId>
+    		<artifactId>elasticsearch</artifactId>
+    		<version>${elasticsearch.version}</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>x-pack-transport</artifactId>
+            <version>${elasticsearch.client.version}</version>
+        </dependency>
+        
+		<dependency>
+   			<groupId>org.elasticsearch.client</groupId>
+    		<artifactId>transport</artifactId>
+    		<version>${elasticsearch.client.version}</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>${springdata.commons.version}</version>
+        </dependency>
+        
+		<!-- https://mvnrepository.com/artifact/org.elasticsearch.plugin/transport-netty4-client -->
+		<dependency>
+    		<groupId>org.elasticsearch.plugin</groupId>
+   		 	<artifactId>transport-netty4-client</artifactId>
+    		<version>${elasticsearch.plugin.version}</version>
+    	</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet.version}</version>
+		</dependency>
+  
+	    <dependency>
+	      	<groupId>junit</groupId>
+	      	<artifactId>junit</artifactId>
+	    	<version>3.8.1</version>
+	     	<scope>test</scope>
+	    </dependency>
+    
+  </dependencies>
+  
+  <repositories>
+          <!-- add the elastic repository -->
+          <repository>
+              <id>elastic</id>
+              <url>https://artifacts.elastic.co/maven</url>
+              <releases>
+                  <enabled>true</enabled>
+              </releases>
+              <snapshots>
+                  <enabled>false</enabled>
+              </snapshots>
+          </repository>
+   </repositories>
+    
+  <build>
+  	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>${maven-compiler.version}</version>
+			<configuration>
+				<source>${java.version}</source>
+				<target>${java.version}</target>
+			</configuration>
+			</plugin>
+	</plugins>
+	
+    <finalName>ESCloudSampleTest</finalName>
+  </build>
+</project>

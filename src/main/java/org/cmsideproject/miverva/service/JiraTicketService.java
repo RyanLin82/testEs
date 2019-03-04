@@ -1,30 +1,23 @@
 package org.cmsideproject.miverva.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
-import org.cmsideproject.minerva.repo.MinervaRepoPersistence;
 import org.cmsideproject.minerva.repo.TicketSumaryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 @Service
 public class JiraTicketService {
 
-//	@Autowired
-//	TicketSumaryRepo ticketSumaryRepo;
-	
 	@Autowired
-	MinervaRepoPersistence ticketSumaryRepo;
+	TicketSumaryRepo ticketSumaryRepo;
+	
+//	@Autowired
+//	MinervaRepoPersistence<TicketSumaryDTO> ticketSumaryRepo;
 
 	public void insertData(String indexName, String insertData) throws ErrorInputException, ElasticSearchRequestException {
 		ticketSumaryRepo.add(indexName, insertData);

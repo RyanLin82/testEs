@@ -23,11 +23,6 @@ public class GetResponse extends Response {
 	}
 
 	
-//	public GetResponse(Builder build) {
-//		super(build);
-//		this.data = build.getActual().getData();
-//	}
-
 	public static class Builder extends BaseBuilder<GetResponse, Builder> {
 
 		@Override
