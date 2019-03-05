@@ -299,6 +299,13 @@ public abstract class MinervaRepo<T> {
 
 	abstract void isEmpty(T t) throws ErrorInputException;
 
+	
+	/**
+	 * String to Map
+	 * @param data
+	 * @return
+	 * @throws DTOParseFailException
+	 */
 	private Map stringToMap(String data) throws DTOParseFailException {
 		ObjectMapper mopper = new ObjectMapper();
 		Map<String, String> updateDataMap = new HashMap<>();

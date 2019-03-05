@@ -1,8 +1,8 @@
 package org.cmsideproject.minerva.repo;
 
-import org.cmsideproject.minerva.entity.TestTicketSumary;
+import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-public interface TestTicketSummaryRepository extends ElasticsearchRepository<TestTicketSumary, String> {
+public interface TestTicketSummaryRepository extends ElasticsearchRepository<TicketSummarySpringDataDTO, String> {
 
 }
