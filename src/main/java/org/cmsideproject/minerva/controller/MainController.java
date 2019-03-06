@@ -1,5 +1,8 @@
 package org.cmsideproject.minerva.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.cmsideproject.Suffix;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
@@ -89,7 +92,7 @@ public class MainController {
 //	}
 	
 	@RequestMapping(value = "minerva/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse postTicketSumary(@PathVariable("index") String index, @RequestBody String data) throws ErrorInputException{
+	public MinervaResponse postTicketSumary(@PathVariable("index") String index, @RequestBody List<Map<String,Object>> data) throws ErrorInputException{
 		MinervaResponse minervaResponse = new MinervaResponse();
 		testTicketSumaryService.save(data);
 		return minervaResponse;

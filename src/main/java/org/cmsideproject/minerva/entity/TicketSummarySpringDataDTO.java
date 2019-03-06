@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Document(indexName = "ryan_springdata_sum_201809", type = "_doc", createIndex = true)
 public class TicketSummarySpringDataDTO {
 
-	@Id
-	@JsonProperty("id")
-    private String id;
+//	@Id
+//	@JsonProperty("id")
+//    private String id;
 	
 	@JsonProperty("BA_Assignee")
 	private String baAssignee;
@@ -26,13 +26,13 @@ public class TicketSummarySpringDataDTO {
 	private String baLocation;
 
 	@JsonProperty("BA_SLA_Days")
-	private double baSlaDays;
+	private String baSlaDays;
 
 	@JsonProperty("BA_SLA_Passed")
 	private String baSlaPassed;
 
 	@JsonProperty("BA_Total_In_Progress_Time")
-	private double baTotalInProgressTime;
+	private String baTotalInProgressTime;
 
 	@JsonProperty("Component")
 	private String component;
@@ -53,29 +53,30 @@ public class TicketSummarySpringDataDTO {
 	private String devLocation;
 
 	@JsonProperty("DEV_SLA_Days")
-	private double devSlaDays;
+	private String devSlaDays;
 
 	@JsonProperty("DEV_SLA_Passed")
 	private String devSlaPassed;
 
 	@JsonProperty("DEV_Total_In_Progress_Time")
-	private double devTotalInProgressTime;
+	private String devTotalInProgressTime;
 
 	@JsonProperty("DEV_Total_Blocked_Time")
-	private long devTotalBlockedTime;
+	private String devTotalBlockedTime;
 
 	@JsonProperty("DEV_Total_Waiting_Time")
-	private double devTotalWaitingTime;
+	private String devTotalWaitingTime;
 
 	@JsonProperty("Done_Date")
 	private String doneDate;
 
 	@JsonProperty("Exception")
-	private long exception;
+	private String exception;
 
 	@JsonProperty("Exception_Total_Time")
-	private double exceptionTotalTime;
+	private String exceptionTotalTime;
 
+	@Id
 	@JsonProperty("Jira")
 	private String jira;
 
@@ -86,7 +87,7 @@ public class TicketSummarySpringDataDTO {
 	private String label;
 
 	@JsonProperty("Need_More_Info")
-	private long needMoreInfo;
+	private String needMoreInfo;
 
 	@JsonProperty("QA_Assignee")
 	private String qaAssignee;
@@ -101,28 +102,28 @@ public class TicketSummarySpringDataDTO {
 	private String qaLocation;
 
 	@JsonProperty("QA_SLA_Days")
-	private double qaSlaDays;
+	private String qaSlaDays;
 
 	@JsonProperty("QA_SLA_Passed")
 	private String qaSlaPassed;
 
 	@JsonProperty("QA_Total_In_Progress_Time")
-	private double qaTotalInProgressTime;
+	private String qaTotalInProgressTime;
 
 	@JsonProperty("QA_Total_Blocked_Time")
-	private double qaTotalBlockedTime;
+	private String qaTotalBlockedTime;
 
 	@JsonProperty("QA_Total_Waiting_Time")
-	private double qaTotalWaitingTime;
+	private String qaTotalWaitingTime;
 
 	@JsonProperty("Redo")
-	private long redo;
+	private String redo;
 
 	@JsonProperty("Status")
 	private String status;
 
 	@JsonProperty("Test_Fail")
-	private long testFail;
+	private String testFail;
 
 	@JsonProperty("Type")
 	private String type;
@@ -162,11 +163,11 @@ public class TicketSummarySpringDataDTO {
 		this.baLocation = baLocation;
 	}
 
-	public double getBaSlaDays() {
+	public String getBaSlaDays() {
 		return baSlaDays;
 	}
 
-	public void setBaSlaDays(double baSlaDays) {
+	public void setBaSlaDays(String baSlaDays) {
 		this.baSlaDays = baSlaDays;
 	}
 
@@ -178,11 +179,11 @@ public class TicketSummarySpringDataDTO {
 		this.baSlaPassed = baSlaPassed;
 	}
 
-	public double getBaTotalInProgressTime() {
+	public String getBaTotalInProgressTime() {
 		return baTotalInProgressTime;
 	}
 
-	public void setBaTotalInProgressTime(double baTotalInProgressTime) {
+	public void setBaTotalInProgressTime(String baTotalInProgressTime) {
 		this.baTotalInProgressTime = baTotalInProgressTime;
 	}
 
@@ -234,11 +235,11 @@ public class TicketSummarySpringDataDTO {
 		this.devLocation = devLocation;
 	}
 
-	public double getDevSlaDays() {
+	public String getDevSlaDays() {
 		return devSlaDays;
 	}
 
-	public void setDevSlaDays(double devSlaDays) {
+	public void setDevSlaDays(String devSlaDays) {
 		this.devSlaDays = devSlaDays;
 	}
 
@@ -250,27 +251,27 @@ public class TicketSummarySpringDataDTO {
 		this.devSlaPassed = devSlaPassed;
 	}
 
-	public double getDevTotalInProgressTime() {
+	public String getDevTotalInProgressTime() {
 		return devTotalInProgressTime;
 	}
 
-	public void setDevTotalInProgressTime(double devTotalInProgressTime) {
+	public void setDevTotalInProgressTime(String devTotalInProgressTime) {
 		this.devTotalInProgressTime = devTotalInProgressTime;
 	}
 
-	public long getDevTotalBlockedTime() {
+	public String getDevTotalBlockedTime() {
 		return devTotalBlockedTime;
 	}
 
-	public void setDevTotalBlockedTime(long devTotalBlockedTime) {
+	public void setDevTotalBlockedTime(String devTotalBlockedTime) {
 		this.devTotalBlockedTime = devTotalBlockedTime;
 	}
 
-	public double getDevTotalWaitingTime() {
+	public String getDevTotalWaitingTime() {
 		return devTotalWaitingTime;
 	}
 
-	public void setDevTotalWaitingTime(double devTotalWaitingTime) {
+	public void setDevTotalWaitingTime(String devTotalWaitingTime) {
 		this.devTotalWaitingTime = devTotalWaitingTime;
 	}
 
@@ -282,19 +283,19 @@ public class TicketSummarySpringDataDTO {
 		this.doneDate = doneDate;
 	}
 
-	public long getException() {
+	public String getException() {
 		return exception;
 	}
 
-	public void setException(long exception) {
+	public void setException(String exception) {
 		this.exception = exception;
 	}
 
-	public double getExceptionTotalTime() {
+	public String getExceptionTotalTime() {
 		return exceptionTotalTime;
 	}
 
-	public void setExceptionTotalTime(double exceptionTotalTime) {
+	public void setExceptionTotalTime(String exceptionTotalTime) {
 		this.exceptionTotalTime = exceptionTotalTime;
 	}
 
@@ -322,11 +323,11 @@ public class TicketSummarySpringDataDTO {
 		this.label = label;
 	}
 
-	public long getNeedMoreInfo() {
+	public String getNeedMoreInfo() {
 		return needMoreInfo;
 	}
 
-	public void setNeedMoreInfo(long needMoreInfo) {
+	public void setNeedMoreInfo(String needMoreInfo) {
 		this.needMoreInfo = needMoreInfo;
 	}
 
@@ -362,11 +363,11 @@ public class TicketSummarySpringDataDTO {
 		this.qaLocation = qaLocation;
 	}
 
-	public double getQaSlaDays() {
+	public String getQaSlaDays() {
 		return qaSlaDays;
 	}
 
-	public void setQaSlaDays(double qaSlaDays) {
+	public void setQaSlaDays(String qaSlaDays) {
 		this.qaSlaDays = qaSlaDays;
 	}
 
@@ -378,35 +379,35 @@ public class TicketSummarySpringDataDTO {
 		this.qaSlaPassed = qaSlaPassed;
 	}
 
-	public double getQaTotalInProgressTime() {
+	public String getQaTotalInProgressTime() {
 		return qaTotalInProgressTime;
 	}
 
-	public void setQaTotalInProgressTime(double qaTotalInProgressTime) {
+	public void setQaTotalInProgressTime(String qaTotalInProgressTime) {
 		this.qaTotalInProgressTime = qaTotalInProgressTime;
 	}
 
-	public double getQaTotalBlockedTime() {
+	public String getQaTotalBlockedTime() {
 		return qaTotalBlockedTime;
 	}
 
-	public void setQaTotalBlockedTime(double qaTotalBlockedTime) {
+	public void setQaTotalBlockedTime(String qaTotalBlockedTime) {
 		this.qaTotalBlockedTime = qaTotalBlockedTime;
 	}
 
-	public double getQaTotalWaitingTime() {
+	public String getQaTotalWaitingTime() {
 		return qaTotalWaitingTime;
 	}
 
-	public void setQaTotalWaitingTime(double qaTotalWaitingTime) {
+	public void setQaTotalWaitingTime(String qaTotalWaitingTime) {
 		this.qaTotalWaitingTime = qaTotalWaitingTime;
 	}
 
-	public long getRedo() {
+	public String getRedo() {
 		return redo;
 	}
 
-	public void setRedo(long redo) {
+	public void setRedo(String redo) {
 		this.redo = redo;
 	}
 
@@ -418,11 +419,11 @@ public class TicketSummarySpringDataDTO {
 		this.status = status;
 	}
 
-	public long getTestFail() {
+	public String getTestFail() {
 		return testFail;
 	}
 
-	public void setTestFail(long testFail) {
+	public void setTestFail(String testFail) {
 		this.testFail = testFail;
 	}
 
