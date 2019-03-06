@@ -14,6 +14,7 @@ import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
 import org.cmsideproject.minerva.entity.GetResponse;
 import org.cmsideproject.minerva.entity.MinervaResponseStatus;
+import org.cmsideproject.minerva.entity.PostResponse;
 import org.springframework.context.annotation.Configuration;
 
 @Aspect
@@ -83,6 +84,44 @@ public class MinervaAccessAspect {
 		return resJson;
 	}
 
+	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.add*(..))")
+	public PostResponse aroundAdd(ProceedingJoinPoint joinPoint) {
+		PostResponse resJson = new PostResponse();
+		MinervaResponseStatus status = null;
+		String msg = null;
+		String statusCode = null;
+		Object data = null;
+		try {
+			resJson = (PostResponse) joinPoint.proceed();
+			statusCode = "100";
+			status = MinervaResponseStatus.success;
+			data = joinPoint.getArgs();
+			msg = "success";
+		} catch (ErrorInputException | ElasticSearchRequestException e) {
+			statusCode = e.getCode();
+			msg = e.getMessage();
+			status = MinervaResponseStatus.fail;
+			logger.info("" + e);
+			e.printStackTrace();
+		} catch (DTOParseFailException e) {
+			statusCode = e.getCode();
+			msg = e.getMessage();
+			status = MinervaResponseStatus.fail;
+			logger.info("" + e.getStackTrace());
+			e.printStackTrace();
+		} catch (Throwable e) {
+			statusCode = "-1";
+			msg = "unexpected error";
+			status = MinervaResponseStatus.error;
+			logger1.TicketInfo("" + e.getStackTrace());
+			e.printStackTrace();
+		} finally {
+			resJson = new PostResponse.Builder().message(msg).statusCode(statusCode).build();
+		}
+
+		return resJson;
+	}
+	
 //	@AfterReturning(value = "execution(* org.cmsideproject.minerva.controller.*.get*(..))", returning = "returnValue")
 //	public void loggingRepositoryMethods(JoinPoint joinPoint, Object returnValue) {
 //

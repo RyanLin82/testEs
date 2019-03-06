@@ -2,6 +2,7 @@ package org.cmsideproject.minerva.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +12,7 @@ import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLog;
 import org.cmsideproject.log.MinervaLogImp;
 import org.cmsideproject.minerva.entity.MinervaResponse;
+import org.cmsideproject.minerva.entity.PostResponse;
 import org.cmsideproject.minerva.entity.TicketSumaryDTO;
 import org.cmsideproject.miverva.service.JiraTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,24 @@ public class MineraController {
 			throws ErrorInputException, ElasticSearchRequestException {
 		MinervaResponse minervaResponse = new MinervaResponse();
 		jiraTicketService.add(index, data);
+		return minervaResponse;
+
+	}
+	
+	/**
+	 * Insert datas into certain index.
+	 * 
+	 * @param index
+	 * @param data
+	 * @return
+	 * @throws ElasticSearchRequestException
+	 * @throws ErrorInputException
+	 */
+	@RequestMapping(value = "minerva/{index}/addAll", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public PostResponse addtAll(@PathVariable("index") String index, @RequestBody List<Map<String,Object>> data)
+			throws ErrorInputException, ElasticSearchRequestException {
+		PostResponse minervaResponse = new PostResponse();
+		jiraTicketService.insertAll(index, data);
 		return minervaResponse;
 
 	}
