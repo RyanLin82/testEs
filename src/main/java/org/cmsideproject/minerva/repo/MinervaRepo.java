@@ -68,7 +68,6 @@ public abstract class MinervaRepo<T> {
 	public void add(String indexName, String insertData) throws ErrorInputException {
 
 //		T ticket = this.checkInputDataFormat(insertData);
-//
 //		isEmpty(ticket);
 
 //		this.validateInputDataMappingEntityAllField(insertData);
@@ -291,12 +290,17 @@ public abstract class MinervaRepo<T> {
 
 		ObjectMapper mapper2 = new ObjectMapper();
 
-		T ticket2;
-		try {
-			ticket2 = mapper2.readValue(inputData, clazz);
-		} catch (IOException e) {
-			throw new ErrorInputException(inputData, "input data mapping entity error");
-		}
+		T ticket2 = null;
+//		try {
+			try {
+				ticket2 = mapper2.readValue(inputData, clazz);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//		} catch (IOException e) {
+//			throw new ErrorInputException(inputData, "input data mapping entity error");
+//		}
 
 		isEmpty(ticket2);
 

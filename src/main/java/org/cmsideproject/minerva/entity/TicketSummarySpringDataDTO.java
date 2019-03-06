@@ -84,6 +84,7 @@ public class TicketSummarySpringDataDTO {
 	@JsonProperty("Exception_Total_Time")
 	private String exceptionTotalTime;
 
+	@Id
 	@JsonProperty("Jira")
 	private String jira;
 
