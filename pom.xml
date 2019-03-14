@@ -67,38 +67,38 @@
 			<artifactId>spring-data-elasticsearch</artifactId>
 			<version>${springdata.elasticsearch.version}</version>
 		</dependency>
-		
+
 		<dependency>
-    		<groupId>org.elasticsearch</groupId>
-    		<artifactId>elasticsearch</artifactId>
-    		<version>${elasticsearch.version}</version>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>${elasticsearch.version}</version>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>x-pack-transport</artifactId>
-            <version>${elasticsearch.client.version}</version>
-        </dependency>
-        
-		<dependency>
-   			<groupId>org.elasticsearch.client</groupId>
-    		<artifactId>transport</artifactId>
-    		<version>${elasticsearch.client.version}</version>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>x-pack-transport</artifactId>
+			<version>${elasticsearch.client.version}</version>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-            <version>${springdata.commons.version}</version>
-        </dependency>
-        
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>transport</artifactId>
+			<version>${elasticsearch.client.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+			<version>${springdata.commons.version}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.elasticsearch.plugin/transport-netty4-client -->
 		<dependency>
-    		<groupId>org.elasticsearch.plugin</groupId>
-   		 	<artifactId>transport-netty4-client</artifactId>
-    		<version>${elasticsearch.plugin.version}</version>
-    	</dependency>
-		
+			<groupId>org.elasticsearch.plugin</groupId>
+			<artifactId>transport-netty4-client</artifactId>
+			<version>${elasticsearch.plugin.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -161,7 +161,11 @@
 			<scope>compile</scope>
 		</dependency>
 
-
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -172,13 +176,13 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<version>${maven-compiler.version}</version>
-			<configuration>
-				<source>${java.version}</source>
-				<target>${java.version}</target>
-			</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

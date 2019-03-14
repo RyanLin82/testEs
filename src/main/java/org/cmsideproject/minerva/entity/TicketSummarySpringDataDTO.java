@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class TicketSummarySpringDataDTO {
 
 	@Id
-    private String id;
-	
+	private String id;
+
 	@JsonProperty("BA_Assignee")
 	@Field(type = FieldType.Text, store = true, fielddata = true)
 	private String baAssignee;
@@ -25,7 +25,6 @@ public class TicketSummarySpringDataDTO {
 	@JsonProperty("BA_Excluded")
 	@Field(type = FieldType.Text, store = true)
 	private String baExcluded;
-
 	@JsonProperty("BA_Location")
 	@Field(type = FieldType.Text, store = true)
 	private String baLocation;
@@ -482,6 +481,4 @@ public class TicketSummarySpringDataDTO {
 		this.summary = summary;
 	}
 
-	
-	
 }

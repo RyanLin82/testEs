@@ -14,6 +14,7 @@ import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLog;
 import org.cmsideproject.log.MinervaLogImp;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public abstract class MinervaRepo<T> {
 
 	private Logger log = LogManager.getLogger(this.getClass());
 	private MinervaLog log1 = new MinervaLogImp(this.getClass());
-	
+
 	@Value("${file.directory}")
 	private String esUrl;
 
@@ -49,6 +50,13 @@ public abstract class MinervaRepo<T> {
 		this.clazz = clazz;
 	}
 
+	public void insertAll(String indexName, List<Map<String, Object>> insertData) throws ErrorInputException {
+		for(Map<String, Object> data : insertData) {
+			JSONObject json = new JSONObject(data);
+			this.add(indexName, json.toString());
+		}
+	}
+
 	/**
 	 * Add datas into ElasticSearch which matches the indexName
 	 * 
@@ -60,7 +68,6 @@ public abstract class MinervaRepo<T> {
 	public void add(String indexName, String insertData) throws ErrorInputException {
 
 //		T ticket = this.checkInputDataFormat(insertData);
-
 //		isEmpty(ticket);
 
 //		this.validateInputDataMappingEntityAllField(insertData);
@@ -68,11 +75,10 @@ public abstract class MinervaRepo<T> {
 		StringBuilder strbuilder = new StringBuilder();
 		strbuilder.append(esUrl).append("/").append(indexName).append("/_doc/");
 
-		
-//		log.info("\n add data to \n Index : [{}] \n Url : [{}] \n insert data : [{}]", indexName, esUrl, insertData);
+		log.info("\n add data to \n Index : [{}] \n Url : [{}] \n insert data : [{}]", indexName, esUrl, insertData);
 
-		log1.TicketInfo(indexName, "Get all", esUrl);
-		
+//		log1.TicketInfo(indexName, "Get all", esUrl);
+
 		ResponseEntity<String> response = restTemplate.postForEntity(strbuilder.toString(),
 				new HttpEntity<>(insertData, headers), String.class);
 
@@ -103,7 +109,7 @@ public abstract class MinervaRepo<T> {
 //		log.info("\n GetAll data from \n Index : [{}] \n Url : [{}]", indexName, url);
 
 		log1.TicketInfo(indexName, "Get All", url);
-		
+
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
 		// TODO HttpClientErrorException
@@ -123,9 +129,8 @@ public abstract class MinervaRepo<T> {
 
 		resultList = this.listMapToListObject(dataList);
 
-
 		log1.TicketInfo(indexName, "Get all", url, resultList);
-		
+
 		return resultList;
 
 	}
@@ -157,7 +162,7 @@ public abstract class MinervaRepo<T> {
 		for (Map.Entry<String, String> map : conditionsMap.entrySet()) {
 			getCondition = "\"" + map.getKey() + ".keyword\" : \"" + map.getValue() + "\",";
 		}
-		getCondition = getCondition.substring(0, getCondition.length()-1);
+		getCondition = getCondition.substring(0, getCondition.length() - 1);
 		StringBuilder strbuilderConditions = new StringBuilder();
 		strbuilderConditions.append("{\r\n \"query\": { \r\n  \"match\": \r\n {").append(getCondition)
 				.append("    }\r\n}\r\n}");
@@ -196,7 +201,7 @@ public abstract class MinervaRepo<T> {
 		StringBuilder strbuilder = new StringBuilder();
 		strbuilder.append(esUrl).append("/").append(indexName).append("/_doc/_search");
 		String url = strbuilder.toString();
-		
+
 		Map<String, String> conditionsMap = this.stringToMap(conditions);
 
 		String deleteCondition = "";
@@ -204,7 +209,7 @@ public abstract class MinervaRepo<T> {
 		for (Map.Entry<String, String> map : conditionsMap.entrySet()) {
 			deleteCondition = "\"" + map.getKey() + ".keyword\" : \"" + map.getValue() + "\",";
 		}
-		
+
 //		Map<String, String> conditionsMap = this.stringToMap(conditions);
 
 		String formatConditions = "";
@@ -304,9 +309,9 @@ public abstract class MinervaRepo<T> {
 
 	abstract void isEmpty(T t) throws ErrorInputException;
 
-	
 	/**
 	 * String to Map
+	 * 
 	 * @param data
 	 * @return
 	 * @throws DTOParseFailException
