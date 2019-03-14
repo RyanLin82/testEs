@@ -3,132 +3,171 @@ package org.cmsideproject.minerva.entity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Document(indexName = "ryan_springdata_sum_201809", type = "_doc", createIndex = true)
+@Document(indexName = "ryan_springdata_sum_201809")
 public class TicketSummarySpringDataDTO {
 
-//	@Id
-//	@JsonProperty("id")
-//    private String id;
+	@Id
+    private String id;
 	
 	@JsonProperty("BA_Assignee")
+	@Field(type = FieldType.Text, store = true, fielddata = true)
 	private String baAssignee;
 
 	@JsonProperty("BA_Group")
+	@Field(type = FieldType.Text, store = true)
 	private String baGroup;
 
 	@JsonProperty("BA_Excluded")
+	@Field(type = FieldType.Text, store = true)
 	private String baExcluded;
 
 	@JsonProperty("BA_Location")
+	@Field(type = FieldType.Text, store = true)
 	private String baLocation;
 
 	@JsonProperty("BA_SLA_Days")
+	@Field(type = FieldType.Text, store = true)
 	private String baSlaDays;
 
 	@JsonProperty("BA_SLA_Passed")
+	@Field(type = FieldType.Text, store = true)
 	private String baSlaPassed;
 
 	@JsonProperty("BA_Total_In_Progress_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String baTotalInProgressTime;
 
 	@JsonProperty("Component")
+	@Field(type = FieldType.Text, store = true)
 	private String component;
 
 	@JsonProperty("Comment")
+	@Field(type = FieldType.Text, store = true)
 	private String comment;
 
 	@JsonProperty("DEV_Assignee")
+	@Field(type = FieldType.Text, store = true)
 	private String devAssignee;
 
 	@JsonProperty("DEV_Group")
+	@Field(type = FieldType.Text, store = true)
 	private String devGroup;
 
 	@JsonProperty("DEV_Excluded")
+	@Field(type = FieldType.Text, store = true)
 	private String devExcluded;
 
 	@JsonProperty("DEV_Location")
+	@Field(type = FieldType.Text, store = true)
 	private String devLocation;
 
 	@JsonProperty("DEV_SLA_Days")
+	@Field(type = FieldType.Text, store = true)
 	private String devSlaDays;
 
 	@JsonProperty("DEV_SLA_Passed")
+	@Field(type = FieldType.Text, store = true)
 	private String devSlaPassed;
 
 	@JsonProperty("DEV_Total_In_Progress_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String devTotalInProgressTime;
 
 	@JsonProperty("DEV_Total_Blocked_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String devTotalBlockedTime;
 
 	@JsonProperty("DEV_Total_Waiting_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String devTotalWaitingTime;
 
 	@JsonProperty("Done_Date")
+	@Field(type = FieldType.Text, store = true)
 	private String doneDate;
 
 	@JsonProperty("Exception")
+	@Field(type = FieldType.Text, store = true)
 	private String exception;
 
 	@JsonProperty("Exception_Total_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String exceptionTotalTime;
 
-	@Id
 	@JsonProperty("Jira")
+	@Field(type = FieldType.Text, store = true)
 	private String jira;
 
 	@JsonProperty("Keyword")
+	@Field(type = FieldType.Text, store = true)
 	private String keyword;
 
 	@JsonProperty("Label")
+	@Field(type = FieldType.Text, store = true)
 	private String label;
 
 	@JsonProperty("Need_More_Info")
+	@Field(type = FieldType.Text, store = true)
 	private String needMoreInfo;
 
 	@JsonProperty("QA_Assignee")
+	@Field(type = FieldType.Text, store = true)
 	private String qaAssignee;
 
 	@JsonProperty("QA_Group")
+	@Field(type = FieldType.Text, store = true)
 	private String qaGroup;
 
 	@JsonProperty("QA_Excluded")
+	@Field(type = FieldType.Text, store = true)
 	private String qaExcluded;
 
 	@JsonProperty("QA_Location")
+	@Field(type = FieldType.Text, store = true)
 	private String qaLocation;
 
 	@JsonProperty("QA_SLA_Days")
+	@Field(type = FieldType.Text, store = true)
 	private String qaSlaDays;
 
 	@JsonProperty("QA_SLA_Passed")
+	@Field(type = FieldType.Text, store = true)
 	private String qaSlaPassed;
 
 	@JsonProperty("QA_Total_In_Progress_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String qaTotalInProgressTime;
 
 	@JsonProperty("QA_Total_Blocked_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String qaTotalBlockedTime;
 
 	@JsonProperty("QA_Total_Waiting_Time")
+	@Field(type = FieldType.Text, store = true)
 	private String qaTotalWaitingTime;
 
 	@JsonProperty("Redo")
+	@Field(type = FieldType.Text, store = true)
 	private String redo;
 
 	@JsonProperty("Status")
+	@Field(type = FieldType.Text, store = true)
 	private String status;
 
 	@JsonProperty("Test_Fail")
+	@Field(type = FieldType.Text, store = true)
 	private String testFail;
 
 	@JsonProperty("Type")
+	@Field(type = FieldType.Text, store = true)
 	private String type;
 
 	@JsonProperty("Summary")
+	@Field(type = FieldType.Text, store = true)
 	private String summary;
 
 	public String getBaAssignee() {
@@ -443,8 +482,6 @@ public class TicketSummarySpringDataDTO {
 		this.summary = summary;
 	}
 
-	public boolean isEmpty() {
-		return StringUtils.isEmpty(jira) || StringUtils.isEmpty(baAssignee) || StringUtils.isEmpty(devAssignee)
-				|| StringUtils.isEmpty(qaAssignee);
-	}
+	
+	
 }

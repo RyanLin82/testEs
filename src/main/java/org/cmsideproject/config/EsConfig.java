@@ -22,7 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
-@EnableElasticsearchRepositories(basePackages = "org.cmsideproject.repository")
+@EnableElasticsearchRepositories(basePackages = "org.cmsideproject.minerva.repo")
 @Configuration
 @PropertySource("classpath:application.properties")
 public class EsConfig {
