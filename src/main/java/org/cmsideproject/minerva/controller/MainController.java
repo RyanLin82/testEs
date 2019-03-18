@@ -1,25 +1,18 @@
 package org.cmsideproject.minerva.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.cmsideproject.Suffix;
-import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.MinervaResponse;
-import org.cmsideproject.minerva.entity.TestTicketSumary;
-import org.cmsideproject.minerva.entity.TestTicketSumary.TestTicketSumaryBuilder;
 import org.cmsideproject.miverva.service.TestTicketSumaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,7 +24,7 @@ public class MainController {
 
 	@Autowired
 	private TestTicketSumaryService testTicketSumaryService;
-
+	
 	@Autowired
 	private Suffix suffix;
 
@@ -91,11 +84,20 @@ public class MainController {
 //		return new ResponseEntity<String>("GET Response", HttpStatus.OK);
 //	}
 	
-	@RequestMapping(value = "minerva/post/{index}", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse postTicketSumary(@PathVariable("index") String index, @RequestBody List<Map<String,Object>> data) throws ErrorInputException{
+	@RequestMapping(value = "minerva/TicketSummary/post", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse postTicketSumary(@RequestBody List<Map<String,Object>> data) throws ErrorInputException{
 		MinervaResponse minervaResponse = new MinervaResponse();
 		testTicketSumaryService.save(data);
 		return minervaResponse;
-
+	}
+	
+	@RequestMapping(value = "minerva/TicketSummary/getOne", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse getOneById(@RequestBody String ticketNumber) throws ErrorInputException{
+		MinervaResponse minervaResponse = new MinervaResponse();
+//		testTicketSumaryService.findById(ticketNumber).get();
+		List list = new ArrayList<>();
+		list.add(testTicketSumaryService.findByJira(ticketNumber).get());
+		minervaResponse.setData(list);
+		return minervaResponse;
 	}
 }

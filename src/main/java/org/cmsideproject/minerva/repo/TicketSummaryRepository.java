@@ -5,4 +5,5 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 public interface TicketSummaryRepository extends ElasticsearchRepository<TicketSumaryDTO2, String> {
 
+	
 }

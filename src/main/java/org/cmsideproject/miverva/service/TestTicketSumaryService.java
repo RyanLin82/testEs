@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.TestTicketSumary;
+import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 
 public interface TestTicketSumaryService {
 
@@ -15,7 +16,9 @@ public interface TestTicketSumaryService {
 
 //    void delete(TestTicketSumary ticket);
 //
-//    Optional<TestTicketSumary> findOne(String id);
+    Optional<List<TicketSummarySpringDataDTO>> findByJira(String id);
+    
+    Optional<TicketSummarySpringDataDTO> findById(Long id);
 //
 //    Iterable<TestTicketSumary> findAll();
 }

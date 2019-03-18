@@ -3,6 +3,8 @@ package org.cmsideproject.miverva.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
@@ -25,11 +27,11 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 //        return ticketRepository.save(book);
 //    }
 
-	public void save(List<Map<String,Object>> datas) throws ErrorInputException {
+	public void save(List<Map<String, Object>> datas) throws ErrorInputException {
 		List<TicketSummarySpringDataDTO> datalist = null;
 		datalist = this.listMapToListObject(datas);
 
-		for(TicketSummarySpringDataDTO data : datalist) {
+		for (TicketSummarySpringDataDTO data : datalist) {
 			ticketRepository.save(data);
 		}
 	}
@@ -38,9 +40,13 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 //    	ticketRepository.delete(book);
 //    }
 //
-//    public Optional<TestTicketSumary> findOne(String id) {
-//        return ticketRepository.findById(id);
-//    }
+    public Optional<List<TicketSummarySpringDataDTO>> findByJira(String id) {
+        return ticketRepository.findByJira(id);
+    }
+    
+    public Optional<TicketSummarySpringDataDTO> findById(Long id) {
+        return ticketRepository.findById(id);
+    }
 //
 //    public Iterable<TestTicketSumary> findAll() {
 //        return ticketRepository.findAll();
@@ -48,6 +54,8 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 //    
 
 	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
+//		dataList = this.mapKeyToLowercase(dataList);
+		
 		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
 		for (Map<String, Object> map : dataList) {
@@ -55,6 +63,18 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 			resultList.add(ticket);
 		}
 		return resultList;
+	}
+
+	private List<Map<String, Object>> mapKeyToLowercase(List<Map<String, Object>> dataList) {
+
+		List list = new ArrayList<>();
+
+		for (Map<String, Object> map : dataList) {
+			Map<String, Object> nodeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+			nodeMap.putAll(map);
+			list.add(nodeMap);
+		}
+		return list;
 	}
 
 }
