@@ -1,11 +1,17 @@
 package org.cmsideproject.miverva.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import org.cmsideproject.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 import org.cmsideproject.minerva.repo.TestTicketSummaryRepository;
@@ -19,6 +25,9 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	private TestTicketSummaryRepository ticketRepository;
 
 	@Autowired
+	private Suffix suffix;
+	
+	@Autowired
 	public void setTicketRepository(TestTicketSummaryRepository ticketRepository) {
 		this.ticketRepository = ticketRepository;
 	}
@@ -27,13 +36,29 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 //        return ticketRepository.save(book);
 //    }
 
-	public void save(List<Map<String, Object>> datas) throws ErrorInputException {
+	public void save(List<Map<String, Object>> datas) throws ErrorInputException, ParseException {
 		List<TicketSummarySpringDataDTO> datalist = null;
 		datalist = this.listMapToListObject(datas);
 
 		for (TicketSummarySpringDataDTO data : datalist) {
+			setIndex(data);
 			ticketRepository.save(data);
 		}
+	}
+	
+	private void setIndex(TicketSummarySpringDataDTO data) throws ParseException {
+		String doneDate = data.getDoneDate();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		Date date  = sf.parse(doneDate);
+		
+		
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		int fromYear = calendar.get(Calendar.YEAR);
+		int fromMonth = calendar.get(Calendar.MONTH);
+		String indexName = Integer.toString(fromYear) + Integer.toString(fromMonth);
+		suffix.setValue(indexName);
+	
 	}
 
 //    public void delete(TestTicketSumary book) {
@@ -44,7 +69,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
         return ticketRepository.findByJira(id);
     }
     
-    public Optional<TicketSummarySpringDataDTO> findById(Long id) {
+    public Optional<TicketSummarySpringDataDTO> findById(String id) {
         return ticketRepository.findById(id);
     }
 //

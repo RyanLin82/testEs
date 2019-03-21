@@ -3,7 +3,8 @@ package org.cmsideproject.minerva.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
-@Document(indexName = "ryan_springdata_sum_201809", type = "_doc", createIndex = true)
+@Document(indexName = "test_ryan_#{suffix.getValue()}", type = "_doc", createIndex = true)
+//@Document(indexName = "ryan_springdata_sum_201809", type = "_doc", createIndex = true)
 public class TicketSummarySpringDataDTO {
 
 //	@Id
