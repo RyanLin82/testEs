@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;

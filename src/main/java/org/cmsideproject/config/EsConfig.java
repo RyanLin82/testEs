@@ -134,37 +134,6 @@ public class EsConfig {
             }
         } catch (UnknownHostException e) {
         }
-    	//
-
-//        Settings esSettings = Settings.settingsBuilder()
-//                .put("cluster.name", EsClusterName)
-//                .build();
-//
-//        //https://www.elastic.co/guide/en/elasticsearch/guide/current/_transport_client_versus_node_client.html
-//        return TransportClient.builder()
-//                .settings(esSettings)
-//                .build()
-//                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(EsHost), EsPort));
-    	
-    	
-//    	TransportClient transportClient = null;
-//        try {
-//            // 配置信息
-//            Settings esSetting = Settings.builder()
-//                    .put("cluster.name", EsClusterName)
-//                    //增加嗅探机制，找到ES集群
-//                    .put("client.transport.sniff", true)
-//                    //增加线程池个数为1
-////                    .put("thread_pool.search.size", Integer.parseInt(poolSize))
-//                    .build();
-//
-//            transportClient = new PreBuiltTransportClient(esSetting);
-//            TransportAddress inetSocketTransportAddress = new TransportAddress(InetAddress.getByName(EsHost),
-//                    Integer.valueOf(EsPort));
-//            transportClient.addTransportAddresses(inetSocketTransportAddress);
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-//        }
         
         return client;
     }
@@ -174,9 +143,8 @@ public class EsConfig {
         return new ElasticsearchTemplate(client());
     }
 
-    //Embedded Elasticsearch Server
-    /*@Bean
-    public ElasticsearchOperations elasticsearchTemplate() {
-        return new ElasticsearchTemplate(nodeBuilder().local(true).node().client());
-    }*/
+    @Bean
+	Suffix suffix() {
+		return new Suffix();
+	}
 }

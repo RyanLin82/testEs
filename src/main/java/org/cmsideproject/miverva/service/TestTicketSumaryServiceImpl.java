@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import org.cmsideproject.Suffix;
+import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 import org.cmsideproject.minerva.repo.TestTicketSummaryRepository;

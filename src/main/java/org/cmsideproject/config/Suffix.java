@@ -1,4 +1,4 @@
-package org.cmsideproject;
+package org.cmsideproject.config;
 
 public class Suffix {
 	
