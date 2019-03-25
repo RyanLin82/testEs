@@ -17,9 +17,6 @@ public class JiraTicketService {
 	@Autowired
 	TicketSumaryRepo ticketSumaryRepo;
 	
-//	@Autowired
-//	MinervaRepoPersistence<TicketSumaryDTO> ticketSumaryRepo;
-
 	public void insertData(String indexName, String insertData) throws ErrorInputException, ElasticSearchRequestException {
 		ticketSumaryRepo.add(indexName, insertData);
 	}
@@ -36,22 +33,6 @@ public class JiraTicketService {
 		ticketSumaryRepo.delete(indexName, conditions);
 	}
 
-//	public List<TicketSumaryDTO> getAll(String indexName, String queryIndex, boolean fuzzyIndex)
-//			throws DTOParseFailException {
-//		if (StringUtils.isEmpty(indexName) || StringUtils.isEmpty(queryIndex)) {
-//			return new ArrayList<>();
-//		}
-//		return (List<TicketSumaryDTO>) ticketSumaryRepo.getAll(indexName, queryIndex, fuzzyIndex);
-//	}
-
-//	public void update(String indexName, String updateData, String jiraId) throws Exception {
-//		if (StringUtils.isEmpty(indexName) || StringUtils.isEmpty(updateData) || StringUtils.isEmpty(jiraId)) {
-//		}
-//		ticketSumaryRepo.update(indexName, updateData, jiraId);
-//	}
-
-	
-//
 	public void add(String indexName, String insertData) throws ErrorInputException, ElasticSearchRequestException{
 		ticketSumaryRepo.add(indexName, insertData);
 	}

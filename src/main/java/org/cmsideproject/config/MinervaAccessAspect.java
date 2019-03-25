@@ -29,10 +29,6 @@ public class MinervaAccessAspect {
 	@Before("execution(* org.cmsideproject.minerva.controller.*.*(..))")
 	public void before(JoinPoint joinPoint) {
 
-//		logger.info(" \n ======================= [{}]", joinPoint);
-
-//		logger.info(" \nMinverva service start \n");
-		
 		logger1.TicketInfo(" \n ======================= [{}]", joinPoint);
 
 		logger1.TicketInfo(" \nMinverva service start \n");
@@ -122,20 +118,6 @@ public class MinervaAccessAspect {
 		return resJson;
 	}
 	
-//	@AfterReturning(value = "execution(* org.cmsideproject.minerva.controller.*.get*(..))", returning = "returnValue")
-//	public void loggingRepositoryMethods(JoinPoint joinPoint, Object returnValue) {
-//
-//		GetResponse returnRes = (GetResponse) returnValue;
-//
-//	     if(returnValue !=null)
-//	     {
-//	    	 logger.info("resJson \\\\\\\\\\ empty");
-//	     }
-//	     else
-//	     {
-//	    	 resJson.setData(returnRes.getData());
-//	     }
-//	}
 
 	@After("execution(* org.cmsideproject.minerva.controller.*.*(..))")
 	public void after2(JoinPoint joinPoint) {
