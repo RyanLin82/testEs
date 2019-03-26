@@ -1,5 +1,6 @@
 package org.cmsideproject.minerva.controller;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class MainController {
 
 	@RequestMapping(value = "minerva/TicketSummary/post", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse postTicketSumary(@RequestParam String index, @RequestBody List<Map<String, Object>> data)
-			throws ErrorInputException, ParseException {
+			throws ErrorInputException, ParseException, IOException {
 //		suffix.setValue(index);
 		MinervaResponse minervaResponse = new MinervaResponse();
 		testTicketSumaryService.save(data);

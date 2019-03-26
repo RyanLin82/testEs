@@ -1,5 +1,6 @@
 package org.cmsideproject.miverva.service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,10 @@ public interface TestTicketSumaryService {
 
 //	TestTicketSumary save(TestTicketSumary ticket);
 //	
-	void save(List<Map<String,Object>> ticket) throws ErrorInputException, ParseException;
-
+	void save(List<Map<String,Object>> ticket) throws ErrorInputException, ParseException, IOException;
+	
+	void saveByDto(List<TicketSummarySpringDataDTO> dataList) throws ErrorInputException, ParseException;
+	
 //    void delete(TestTicketSumary ticket);
 //
     Optional<List<TicketSummarySpringDataDTO>> findByJira(String id);
