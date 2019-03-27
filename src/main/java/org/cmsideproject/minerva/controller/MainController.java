@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.GetResponse;
@@ -36,13 +37,22 @@ public class MainController {
 
 	@Autowired
 	private Suffix suffix;
+	
+	@Autowired
+	AliasSetting aliasSetting;
 
 	@RequestMapping(value = "minerva/TicketSummary/post", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse postTicketSumary(@RequestParam String index, @RequestBody List<Map<String, Object>> data)
 			throws ErrorInputException, ParseException, IOException {
 //		suffix.setValue(index);
 		MinervaResponse minervaResponse = new MinervaResponse();
-		testTicketSumaryService.save(data);
+//		testTicketSumaryService.save(data);
+		
+		
+		aliasSetting.setAlias();
+		
+//		AliasSetting as = new AliasSetting();
+//		as.setAlias();
 		return minervaResponse;
 	}
 

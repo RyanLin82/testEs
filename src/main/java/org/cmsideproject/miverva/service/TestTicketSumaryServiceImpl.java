@@ -2,17 +2,12 @@ package org.cmsideproject.miverva.service;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
@@ -32,8 +27,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	@Autowired
 	private Suffix suffix;
 	
-	@Autowired
-	AliasSetting alias;
+//	AliasSetting alias;
 	
 	
 	@Autowired
@@ -59,7 +53,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 		
 		}
 		
-		alias.setAlias();
+//		alias.setAlias();
 	}
 	
 	public void saveByDto(List<TicketSummarySpringDataDTO> dataList) throws ErrorInputException, ParseException {
@@ -76,18 +70,18 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	
 	}
 	
-	private String getIndex(TicketSummarySpringDataDTO data) throws ParseException {
-		String doneDate = data.getDoneDate();
-		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
-		Date date  = sf.parse(doneDate);
+	private String getIndex(TicketSummarySpringDataDTO data){
+//		String doneDate = data.getDoneDate();
+//		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+//		Date date  = sf.parse(doneDate);
+//		
+//		
+//		Calendar calendar = new GregorianCalendar();
+//		calendar.setTime(date);
+//		int fromYear = calendar.get(Calendar.YEAR);
+//		int fromMonth = calendar.get(Calendar.MONTH);
 		
-		
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(date);
-		int fromYear = calendar.get(Calendar.YEAR);
-		int fromMonth = calendar.get(Calendar.MONTH);
-		
-		return Integer.toString(fromYear) + Integer.toString(fromMonth);
+		return data.getJira();
 	}
 
 //    public void delete(TestTicketSumary book) {
