@@ -12,9 +12,8 @@ import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
-import org.cmsideproject.minerva.entity.GetResponse;
+import org.cmsideproject.minerva.entity.MinervaResponse;
 import org.cmsideproject.minerva.entity.MinervaResponseStatus;
-import org.cmsideproject.minerva.entity.PostResponse;
 import org.springframework.context.annotation.Configuration;
 
 @Aspect
@@ -24,7 +23,7 @@ public class MinervaAccessAspect {
 	
 	private MinervaLogImp logger1 = new MinervaLogImp(this.getClass());
 	
-	GetResponse resJson = null;
+	MinervaResponse resJson = null;
 
 	@Before("execution(* org.cmsideproject.minerva.controller.*.*(..))")
 	public void before(JoinPoint joinPoint) {
@@ -43,14 +42,14 @@ public class MinervaAccessAspect {
 	}
 
 	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.get*(..))")
-	public GetResponse around(ProceedingJoinPoint joinPoint) {
-		GetResponse resJson = new GetResponse();
+	public MinervaResponse around(ProceedingJoinPoint joinPoint) {
+		MinervaResponse resJson = new MinervaResponse();
 		MinervaResponseStatus status = null;
 		String msg = null;
 		String statusCode = null;
 		Object data = null;
 		try {
-			resJson = (GetResponse) joinPoint.proceed();
+			resJson = (MinervaResponse) joinPoint.proceed();
 			statusCode = "100";
 			status = MinervaResponseStatus.success;
 			data = joinPoint.getArgs();
@@ -74,21 +73,21 @@ public class MinervaAccessAspect {
 			logger1.TicketInfo("" + e.getStackTrace());
 			e.printStackTrace();
 		} finally {
-			resJson = new GetResponse.Builder().message(msg).statusCode(statusCode).data(resJson.getData()).build();
+			resJson = new MinervaResponse.MinervaResponseMsgBuilder().message(msg).statusCode(statusCode).data(resJson.getData()).build();
 		}
 
 		return resJson;
 	}
 
 	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.add*(..))")
-	public PostResponse aroundAdd(ProceedingJoinPoint joinPoint) {
-		PostResponse resJson = new PostResponse();
+	public MinervaResponse aroundAdd(ProceedingJoinPoint joinPoint) {
+		MinervaResponse resJson = new MinervaResponse();
 		MinervaResponseStatus status = null;
 		String msg = null;
 		String statusCode = null;
 		Object data = null;
 		try {
-			resJson = (PostResponse) joinPoint.proceed();
+			resJson = (MinervaResponse) joinPoint.proceed();
 			statusCode = "100";
 			status = MinervaResponseStatus.success;
 			data = joinPoint.getArgs();
@@ -112,7 +111,7 @@ public class MinervaAccessAspect {
 			logger1.TicketInfo("" + e.getStackTrace());
 			e.printStackTrace();
 		} finally {
-			resJson = new PostResponse.Builder().message(msg).statusCode(statusCode).build();
+			resJson = new MinervaResponse.MinervaResponseMsgBuilder().message(msg).statusCode(statusCode).build();
 		}
 
 		return resJson;

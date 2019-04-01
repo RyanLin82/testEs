@@ -13,7 +13,6 @@ import java.util.Map;
 import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
-import org.cmsideproject.minerva.entity.GetResponse;
 import org.cmsideproject.minerva.entity.MinervaResponse;
 import org.cmsideproject.minerva.entity.SearchDate;
 import org.cmsideproject.miverva.service.TestTicketSumaryService;
@@ -37,7 +36,7 @@ public class MainController {
 
 	@Autowired
 	private Suffix suffix;
-	
+
 	@Autowired
 	AliasSetting aliasSetting;
 
@@ -47,21 +46,20 @@ public class MainController {
 //		suffix.setValue(index);
 		MinervaResponse minervaResponse = new MinervaResponse();
 //		testTicketSumaryService.save(data);
-		
-		
+
 		aliasSetting.setAlias();
-		
+
 //		AliasSetting as = new AliasSetting();
 //		as.setAlias();
 		return minervaResponse;
 	}
 
 	@RequestMapping(value = "minerva/TicketSummary/getOne", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public GetResponse getOne(@RequestParam String fromDate, @RequestParam String thrDate,
+	public MinervaResponse getOne(@RequestParam String fromDate, @RequestParam String thrDate,
 			@RequestBody String ticketNumber) throws ParseException {
 //		suffix.setValue(index);
 		this.setDate(fromDate, thrDate);
-		GetResponse minervaResponse = new GetResponse();
+		MinervaResponse minervaResponse = new MinervaResponse();
 		List list = new ArrayList<>();
 		String index;
 		for (int i = SearchDate.singleton.getFromYear(); i < SearchDate.singleton.getThrYear(); i++) {
@@ -81,10 +79,10 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "minerva/TicketSummary/getAll", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public GetResponse getAllByTicketNumber(@RequestParam String index, @RequestBody String ticketNumber)
+	public MinervaResponse getAllByTicketNumber(@RequestParam String index, @RequestBody String ticketNumber)
 			throws ErrorInputException {
 		suffix.setValue(index);
-		GetResponse minervaResponse = new GetResponse();
+		MinervaResponse minervaResponse = new MinervaResponse();
 		List list = new ArrayList<>();
 		list.add(testTicketSumaryService.findByJira(ticketNumber).get());
 		minervaResponse.setData(list);

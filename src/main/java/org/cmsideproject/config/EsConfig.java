@@ -1,9 +1,11 @@
 package org.cmsideproject.config;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Set;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -11,7 +13,10 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -125,7 +130,7 @@ public class EsConfig {
 	
 	
 	@Bean
-	public RestHighLevelClient restHighLevelClient() {
+	public ClusterHealthResponse restHighLevelClient() throws IOException {
 		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));
 
@@ -137,7 +142,11 @@ public class EsConfig {
 					}
 				});
 
-		return new org.elasticsearch.client.RestHighLevelClient(builder);
+		RestHighLevelClient client = new org.elasticsearch.client.RestHighLevelClient(builder);
+		
+		ClusterHealthRequest requests = new ClusterHealthRequest();
+		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
+		return response;
 	}
 
 }
