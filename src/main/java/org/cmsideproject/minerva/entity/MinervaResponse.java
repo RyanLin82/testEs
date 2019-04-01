@@ -74,22 +74,22 @@ public class MinervaResponse {
 		public MinervaResponseMsgBuilder() {
 		}
 
-		public MinervaResponseMsgBuilder setStatus(MinervaResponseStatus status) {
+		public MinervaResponseMsgBuilder status(MinervaResponseStatus status) {
 			this.status = status;
 			return this;
 		}
 
-		public MinervaResponseMsgBuilder setData(Collection<?> data) {
+		public MinervaResponseMsgBuilder data(Collection<?> data) {
 			this.data = data;
 			return this;
 		}
 
-		public MinervaResponseMsgBuilder setMessage(String message) {
+		public MinervaResponseMsgBuilder message(String message) {
 			this.message = message;
 			return this;
 		}
 
-		public MinervaResponseMsgBuilder setStatusCode(String statusCode) {
+		public MinervaResponseMsgBuilder statusCode(String statusCode) {
 			this.statusCode = statusCode;
 			return this;
 		}

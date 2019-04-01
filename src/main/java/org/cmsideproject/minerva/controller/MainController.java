@@ -45,9 +45,9 @@ public class MainController {
 			throws ErrorInputException, ParseException, IOException {
 //		suffix.setValue(index);
 		MinervaResponse minervaResponse = new MinervaResponse();
-//		testTicketSumaryService.save(data);
+		testTicketSumaryService.save(data);
 
-		aliasSetting.setAlias();
+//		aliasSetting.setAlias();
 
 //		AliasSetting as = new AliasSetting();
 //		as.setAlias();

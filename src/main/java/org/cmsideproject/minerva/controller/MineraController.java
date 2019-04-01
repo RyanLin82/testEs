@@ -168,7 +168,7 @@ public class MineraController {
 	@RequestMapping(value = "get/ticketSumarys/111", method = RequestMethod.GET)
 	public MinervaResponse test2222() {
 
-		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().setMessage("test2222").build();
+		MinervaResponse resJson = new MinervaResponse.MinervaResponseMsgBuilder().message("test2222").build();
 		return resJson;
 
 	}
@@ -226,7 +226,7 @@ public class MineraController {
 	@RequestMapping(value = "get/ticketSumarys/tt", method = RequestMethod.GET)
 	public MinervaResponse tt() throws ErrorInputException {
 
-		return new MinervaResponse.MinervaResponseMsgBuilder().setMessage("tt").setStatusCode("tt").build();
+		return new MinervaResponse.MinervaResponseMsgBuilder().message("tt").statusCode("tt").build();
 
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
@@ -21,15 +22,15 @@ import org.springframework.stereotype.Service;
 public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 
 	MinervaLogImp log = new MinervaLogImp(this.getClass());
-	
+
+	@Autowired
 	private TestTicketSummaryRepository ticketRepository;
 
 	@Autowired
 	private Suffix suffix;
-	
-//	AliasSetting alias;
-	
-	
+	@Autowired
+	AliasSetting alias;
+
 	@Autowired
 	public void setTicketRepository(TestTicketSummaryRepository ticketRepository) {
 		this.ticketRepository = ticketRepository;
@@ -42,7 +43,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	public void save(List<Map<String, Object>> datas) throws ErrorInputException, ParseException, IOException {
 		List<TicketSummarySpringDataDTO> datalist = null;
 		datalist = this.listMapToListObject(datas);
-		String indexName; 
+		String indexName;
 		for (TicketSummarySpringDataDTO data : datalist) {
 			setIndex(data);
 			ticketRepository.save(data);
@@ -50,12 +51,12 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 //			alias.setAlias("sum_" + indexName.substring(0, 4),"test_ryan_" + this.getIndex(data));
 //		
 //			log.TicketInfo("\n\n"+ "sum" + indexName.substring(0, 3)+"\n"+"test_ryan_" + this.getIndex(data));
-		
+			alias.setAlias(data);
 		}
-		
+
 //		alias.setAlias();
 	}
-	
+
 	public void saveByDto(List<TicketSummarySpringDataDTO> dataList) throws ErrorInputException, ParseException {
 
 		for (TicketSummarySpringDataDTO data : dataList) {
@@ -63,14 +64,14 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 			ticketRepository.save(data);
 		}
 	}
-	
+
 	private void setIndex(TicketSummarySpringDataDTO data) throws ParseException {
-		
+
 		suffix.setValue(this.getIndex(data));
-	
+
 	}
-	
-	private String getIndex(TicketSummarySpringDataDTO data){
+
+	private String getIndex(TicketSummarySpringDataDTO data) {
 //		String doneDate = data.getDoneDate();
 //		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 //		Date date  = sf.parse(doneDate);
@@ -80,7 +81,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 //		calendar.setTime(date);
 //		int fromYear = calendar.get(Calendar.YEAR);
 //		int fromMonth = calendar.get(Calendar.MONTH);
-		
+
 		return data.getJira();
 	}
 
@@ -88,13 +89,13 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 //    	ticketRepository.delete(book);
 //    }
 //
-    public Optional<List<TicketSummarySpringDataDTO>> findByJira(String id) {
-        return ticketRepository.findByJira(id);
-    }
-    
-    public Optional<TicketSummarySpringDataDTO> findById(String id) {
-        return ticketRepository.findById(id);
-    }
+	public Optional<List<TicketSummarySpringDataDTO>> findByJira(String id) {
+		return ticketRepository.findByJira(id);
+	}
+
+	public Optional<TicketSummarySpringDataDTO> findById(String id) {
+		return ticketRepository.findById(id);
+	}
 //
 //    public Iterable<TestTicketSumary> findAll() {
 //        return ticketRepository.findAll();
@@ -103,7 +104,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 
 	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
 //		dataList = this.mapKeyToLowercase(dataList);
-		
+
 		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
 		for (Map<String, Object> map : dataList) {
