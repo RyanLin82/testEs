@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 
 public class MinervaLogImp implements MinervaLog {
 	private Logger log;
@@ -50,6 +51,11 @@ public class MinervaLogImp implements MinervaLog {
 		log.info("\n timestamp: [{}] \n index name : [{}], \n method name: [{}] \n url: [{}] \n", new Date(), indexName,
 				method, url);
 
+	}
+
+	public void info(String title1, String value1, String title2, String value2, Object data) {
+		log.info("\n timestamp: [{}] \n [{}] : [{}], \n [{}] : [{}] \n data: [{}] \n", new Date(), title1, value1,
+				title2, value2, data);
 	}
 
 }

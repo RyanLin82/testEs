@@ -1,5 +1,7 @@
 package org.cmsideproject.log;
 
+import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
+
 public interface MinervaLog {
 	
 	/**
@@ -40,5 +42,7 @@ public interface MinervaLog {
 	 * @param url
 	 */
 	void TicketInfo(String indexName, String method, String url);
+	
+	void info(String title1, String value1, String title2, String value2, Object data);
 
 }

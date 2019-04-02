@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.http.HttpHost;
@@ -15,6 +16,8 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.cmsideproject.log.MinervaLog;
+import org.cmsideproject.log.MinervaLogImp;
 import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -32,6 +35,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AliasSetting {
 
+	private MinervaLog log = new MinervaLogImp(this.getClass());
+	
 	@Autowired
 	ClusterHealthResponse response;
 
@@ -50,17 +55,31 @@ public class AliasSetting {
 		ticketIndices.getIndicesName();
 	}
 
+	public void setAlias(List<String> indexName, String aliasName) throws IOException {
+		
+		IndicesAliasesRequest request = new IndicesAliasesRequest();
+		for(String value : indexName) {
+			AliasActions action = new AliasActions(AliasActions.Type.ADD).index(value).alias("ryan222222");
+			request = request.addAliasAction(action);
+			log.info("index", value, "alias", "ryan222222", "");
+		}
+
+	}
+	
 	public void setAlias(TicketSummarySpringDataDTO data) throws ParseException {
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(df.parse(data.getDoneDate()));
-		String alias = Integer.toString(calendar.YEAR) + Integer.toString(calendar.MONTH+1);
+		DateFormat df2 = new SimpleDateFormat("yyyyMM");
+		
+		String index = "test_ryan_"+data.getJira().toLowerCase();
+		String alias = "ryan_"+df2.format(df.parse(data.getDoneDate()));
+		
 		IndicesAliasesRequest request = new IndicesAliasesRequest();
-		AliasActions action = new AliasActions(AliasActions.Type.ADD).index("test_ryan_"+data.getJira()).alias("testtt");
+		AliasActions action = new AliasActions(AliasActions.Type.ADD).index(index).alias("ryan_test_1");
 
 		request = request.addAliasAction(action);
 
+		log.info("index", index, "alias", alias, data);
 	}
 
 }

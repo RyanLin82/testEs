@@ -43,16 +43,20 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	public void save(List<Map<String, Object>> datas) throws ErrorInputException, ParseException, IOException {
 		List<TicketSummarySpringDataDTO> datalist = null;
 		datalist = this.listMapToListObject(datas);
-		String indexName;
+		List<String> indices = new ArrayList<>();
 		for (TicketSummarySpringDataDTO data : datalist) {
+			String indexName = "test_ryan_"+this.getIndex(data); 
 			setIndex(data);
 			ticketRepository.save(data);
 //			indexName = this.getIndex(data);
 //			alias.setAlias("sum_" + indexName.substring(0, 4),"test_ryan_" + this.getIndex(data));
 //		
 //			log.TicketInfo("\n\n"+ "sum" + indexName.substring(0, 3)+"\n"+"test_ryan_" + this.getIndex(data));
-			alias.setAlias(data);
+//			alias.setAlias(data);
+			indices.add(indexName);
 		}
+		
+		alias.setAlias(indices, "");
 
 //		alias.setAlias();
 	}
@@ -67,7 +71,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 
 	private void setIndex(TicketSummarySpringDataDTO data) throws ParseException {
 
-		suffix.setValue(this.getIndex(data));
+		suffix.setValue(this.getIndex(data).toLowerCase());
 
 	}
 
