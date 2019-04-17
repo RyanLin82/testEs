@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
@@ -28,8 +27,8 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 
 	@Autowired
 	private Suffix suffix;
-	@Autowired
-	AliasSetting alias;
+//	@Autowired
+//	AliasSetting alias;
 
 	@Autowired
 	public void setTicketRepository(TestTicketSummaryRepository ticketRepository) {
@@ -56,7 +55,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 			indices.add(indexName);
 		}
 		
-		alias.setAlias(indices, "");
+//		alias.setAlias(indices, "");
 
 //		alias.setAlias();
 	}

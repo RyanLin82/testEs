@@ -54,6 +54,16 @@ public class MainController {
 		return minervaResponse;
 	}
 
+	
+	@RequestMapping(value = "minerva/TicketSummary/setA", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public void setA(@RequestParam String index, @RequestParam String alias)
+			throws ErrorInputException, ParseException, IOException {
+
+		aliasSetting.setAlias(index, alias);		
+		
+	}
+	
+	
 	@RequestMapping(value = "minerva/TicketSummary/getOne", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse getOne(@RequestParam String fromDate, @RequestParam String thrDate,
 			@RequestBody String ticketNumber) throws ParseException {

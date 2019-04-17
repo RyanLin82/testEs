@@ -9,4 +9,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 public interface TestTicketSummaryRepository extends ElasticsearchRepository<TicketSummarySpringDataDTO, String> {
 
 	Optional<List<TicketSummarySpringDataDTO>> findByJira(String ticketNumber);
+
+	Optional<TicketSummarySpringDataDTO> findById(String id);
 }

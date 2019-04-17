@@ -58,7 +58,7 @@ public class EsConfig {
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(esUserName, esUserPassword));
 		return restTemplate;
 	}
-
+//
 	@Bean
 	public HttpHeaders httpHeader() {
 		HttpHeaders headers = new HttpHeaders();
@@ -130,7 +130,7 @@ public class EsConfig {
 	
 	
 	@Bean
-	public ClusterHealthResponse restHighLevelClient() throws IOException {
+	public RestHighLevelClient restHighLevelClient() throws IOException {
 		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));
 
@@ -144,9 +144,9 @@ public class EsConfig {
 
 		RestHighLevelClient client = new org.elasticsearch.client.RestHighLevelClient(builder);
 		
-		ClusterHealthRequest requests = new ClusterHealthRequest();
-		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
-		return response;
+//		ClusterHealthRequest requests = new ClusterHealthRequest();
+//		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
+		return client;
 	}
 
 }
