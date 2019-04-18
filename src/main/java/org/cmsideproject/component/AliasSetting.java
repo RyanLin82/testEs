@@ -24,13 +24,17 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
+import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
+import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestClientBuilder.HttpClientConfigCallback;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.core.AcknowledgedResponse;
+import org.elasticsearch.client.xpack.XPackUsageRequest;
 import org.elasticsearch.cluster.metadata.AliasAction;
+import org.elasticsearch.protocol.xpack.XPackUsageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -55,7 +59,7 @@ public class AliasSetting {
 				new UsernamePasswordCredentials("elastic", "q6KUX12lvelsACXVMGydkKmb"));
 
 		RestClientBuilder builder = RestClient
-				.builder(new HttpHost("1cd79fd6efe94d0091fd28c2d7cb3191.ap-southeast-1.aws.found.io", 9343, "https"))
+				.builder(new HttpHost("1cd79fd6efe94d0091fd28c2d7cb3191.ap-southeast-1.aws.found.io", 9200))
 				.setHttpClientConfigCallback(new HttpClientConfigCallback() {
 					@Override
 					public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -70,9 +74,10 @@ public class AliasSetting {
 
 		request = request.addAliasAction(action);
 
-		RequestOptions requestOption = new RequestOptions().toBuilder().addHeader(name, value);;
-		
 		client.indices().updateAliases(request, RequestOptions.DEFAULT);
+
+		ClusterHealthRequest requests = new ClusterHealthRequest();
+		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
 
 //		ticketIndices.getIndicesName();
 

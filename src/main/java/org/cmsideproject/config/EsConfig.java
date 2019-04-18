@@ -129,24 +129,24 @@ public class EsConfig {
 	}
 	
 	
-	@Bean
-	public RestHighLevelClient restHighLevelClient() throws IOException {
-		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));
-
-		RestClientBuilder builder = RestClient.builder(new HttpHost(EsHost, esPort1, "https"))
-				.setHttpClientConfigCallback(new HttpClientConfigCallback() {
-					@Override
-					public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-						return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-					}
-				});
-
-		RestHighLevelClient client = new org.elasticsearch.client.RestHighLevelClient(builder);
-		
-//		ClusterHealthRequest requests = new ClusterHealthRequest();
-//		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
-		return client;
-	}
+//	@Bean
+//	public RestHighLevelClient restHighLevelClient() throws IOException {
+//		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+//		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));
+//
+//		RestClientBuilder builder = RestClient.builder(new HttpHost(EsHost, esPort1, "https"))
+//				.setHttpClientConfigCallback(new HttpClientConfigCallback() {
+//					@Override
+//					public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+//						return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+//					}
+//				});
+//
+//		RestHighLevelClient client = new org.elasticsearch.client.RestHighLevelClient(builder);
+//		
+////		ClusterHealthRequest requests = new ClusterHealthRequest();
+////		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
+//		return client;
+//	}
 
 }
