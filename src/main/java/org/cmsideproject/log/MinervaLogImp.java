@@ -57,5 +57,10 @@ public class MinervaLogImp implements MinervaLog {
 		log.info("\n timestamp: [{}] \n [{}] : [{}], \n [{}] : [{}] \n data: [{}] \n", new Date(), title1, value1,
 				title2, value2, data);
 	}
+	
+	public void info(String title1, String value1, String title2, String value2) {
+		log.info("\n timestamp: [{}] \n [{}] : [{}], \n [{}] : [{}] \n", new Date(), title1, value1,
+				title2, value2);
+	}
 
 }

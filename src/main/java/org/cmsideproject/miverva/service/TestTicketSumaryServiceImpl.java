@@ -3,16 +3,21 @@ package org.cmsideproject.miverva.service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
 import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 import org.cmsideproject.minerva.repo.TestTicketSummaryRepository;
+import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
+import org.elasticsearch.action.admin.indices.alias.get.GetAliasesResponse;
+import org.elasticsearch.client.transport.TransportClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,47 +31,34 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	private TestTicketSummaryRepository ticketRepository;
 
 	@Autowired
+	TransportClient client;
+	
+	@Autowired
 	private Suffix suffix;
-//	@Autowired
-//	AliasSetting alias;
 
 	@Autowired
 	public void setTicketRepository(TestTicketSummaryRepository ticketRepository) {
 		this.ticketRepository = ticketRepository;
 	}
 
-//    public TestTicketSumary save(TestTicketSumary book) {
-//        return ticketRepository.save(book);
-//    }
-
 	public void save(List<Map<String, Object>> datas) throws ErrorInputException, ParseException, IOException {
 		List<TicketSummarySpringDataDTO> datalist = null;
 		datalist = this.listMapToListObject(datas);
 		List<String> indices = new ArrayList<>();
 		for (TicketSummarySpringDataDTO data : datalist) {
-			String indexName = "test_ryan_"+this.getIndex(data); 
+			String indexName = "test_ryan_" + this.getIndex(data);
 			setIndex(data);
 			ticketRepository.save(data);
-//			indexName = this.getIndex(data);
-//			alias.setAlias("sum_" + indexName.substring(0, 4),"test_ryan_" + this.getIndex(data));
-//		
-//			log.TicketInfo("\n\n"+ "sum" + indexName.substring(0, 3)+"\n"+"test_ryan_" + this.getIndex(data));
-//			alias.setAlias(data);
 			indices.add(indexName);
 		}
-		
-//		alias.setAlias(indices, "");
-
-//		alias.setAlias();
 	}
-
-	public void saveByDto(List<TicketSummarySpringDataDTO> dataList) throws ErrorInputException, ParseException {
-
-		for (TicketSummarySpringDataDTO data : dataList) {
-			setIndex(data);
-			ticketRepository.save(data);
-		}
-	}
+//
+//	public void saveByDto(List<Map<String, Object>> dataList) throws ErrorInputException, ParseException {
+//
+//		for (TicketSummarySpringDataDTO data : dataList) {
+//			this.saveByDto(data);
+//		}
+//	}
 
 	private void setIndex(TicketSummarySpringDataDTO data) throws ParseException {
 
@@ -75,23 +67,10 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	}
 
 	private String getIndex(TicketSummarySpringDataDTO data) {
-//		String doneDate = data.getDoneDate();
-//		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
-//		Date date  = sf.parse(doneDate);
-//		
-//		
-//		Calendar calendar = new GregorianCalendar();
-//		calendar.setTime(date);
-//		int fromYear = calendar.get(Calendar.YEAR);
-//		int fromMonth = calendar.get(Calendar.MONTH);
 
 		return data.getJira();
 	}
 
-//    public void delete(TestTicketSumary book) {
-//    	ticketRepository.delete(book);
-//    }
-//
 	public Optional<List<TicketSummarySpringDataDTO>> findByJira(String id) {
 		return ticketRepository.findByJira(id);
 	}
@@ -99,14 +78,8 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	public Optional<TicketSummarySpringDataDTO> findById(String id) {
 		return ticketRepository.findById(id);
 	}
-//
-//    public Iterable<TestTicketSumary> findAll() {
-//        return ticketRepository.findAll();
-//    }
-//    
 
 	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
-//		dataList = this.mapKeyToLowercase(dataList);
 
 		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
@@ -128,5 +101,23 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 		}
 		return list;
 	}
+
+	@Override
+	public List<TicketSummarySpringDataDTO> getByAlias(String aliasName) throws InterruptedException, ExecutionException {
+		GetAliasesResponse r = client.admin().indices().getAliases(new GetAliasesRequest().aliases(aliasName)).get();
+
+//		for(Iterator<String> it = r.getAliases().keysIt(); it.hasNext();) {
+//			// HERE IS THE REALINDEXNAME
+//			String realIndexName = it.next();
+//		}
+		return new ArrayList<TicketSummarySpringDataDTO>();
+	
+	}
+
+//	@Override
+//	public void saveByDto(Map<String, Object> data) throws ParseException {
+//		setIndex(data);
+//		ticketRepository.save(data);
+//	}
 
 }

@@ -5,7 +5,6 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Set;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -15,12 +14,11 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.RestClientBuilder.HttpClientConfigCallback;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -35,7 +33,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 
 @EnableElasticsearchRepositories(basePackages = "org.cmsideproject.minerva.repo")
@@ -52,24 +49,6 @@ public class EsConfig {
 	@Value("${es.port}")
 	private int esPort1;
 
-	@Bean
-	public RestTemplate restTemplate() {
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(esUserName, esUserPassword));
-		return restTemplate;
-	}
-//
-	@Bean
-	public HttpHeaders httpHeader() {
-		HttpHeaders headers = new HttpHeaders();
-		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-		headers.setContentType(type);
-		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-		return headers;
-	}
-
-	/////////////
-
 	@Value("${elasticsearch.host1}")
 	private String EsHost;
 
@@ -82,12 +61,24 @@ public class EsConfig {
 	@Value("${elasticsearch.xpack.security.user1}")
 	private String EsUserInfo;
 
-	private boolean ip6Enabled = true;
-
-	private boolean ip4Enabled = true;
+	@Bean
+	public RestTemplate restTemplate() {
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(esUserName, esUserPassword));
+		return restTemplate;
+	}
 
 	@Bean
-	public Client client() throws Exception {
+	public HttpHeaders httpHeader() {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+		headers.setContentType(type);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		return headers;
+	}
+
+	@Bean
+	public TransportClient client() throws Exception {
 		boolean enableSsl = true;
 		boolean insecure = false;
 
@@ -104,6 +95,8 @@ public class EsConfig {
 		// connect to.
 		// Only port 9343 (SSL-encrypted) is currently supported. The use of x-pack
 		// security features is required.
+		boolean ip6Enabled = true;
+		boolean ip4Enabled = true;
 		TransportClient client = new PreBuiltXPackTransportClient(settings);
 		try {
 			for (InetAddress address : InetAddress.getAllByName(EsHost)) {
@@ -127,26 +120,25 @@ public class EsConfig {
 	Suffix suffix() {
 		return new Suffix();
 	}
-	
-	
-//	@Bean
-//	public RestHighLevelClient restHighLevelClient() throws IOException {
-//		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-//		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));
-//
-//		RestClientBuilder builder = RestClient.builder(new HttpHost(EsHost, esPort1, "https"))
-//				.setHttpClientConfigCallback(new HttpClientConfigCallback() {
-//					@Override
-//					public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-//						return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-//					}
-//				});
-//
-//		RestHighLevelClient client = new org.elasticsearch.client.RestHighLevelClient(builder);
-//		
-////		ClusterHealthRequest requests = new ClusterHealthRequest();
-////		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
-//		return client;
-//	}
+
+	@Bean
+	public ClusterHealthResponse restHighLevelClient() throws IOException {
+		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));
+
+		RestClientBuilder builder = RestClient.builder(new HttpHost(EsHost, esPort1, "https"))
+				.setHttpClientConfigCallback(new HttpClientConfigCallback() {
+					@Override
+					public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+						return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+					}
+				});
+
+		RestHighLevelClient client = new org.elasticsearch.client.RestHighLevelClient(builder);
+
+		ClusterHealthRequest requests = new ClusterHealthRequest();
+		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
+		return response;
+	}
 
 }

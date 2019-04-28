@@ -1,20 +1,14 @@
 package org.cmsideproject.config;
 
 public class Suffix {
-	
-	
-//@Value("${IndexNameConfig.somePropertyValue}")
-  private String value;
 
-//  public IndexNameConfig(String somePropertyValue) {
-//	  this.somePropertyValue = somePropertyValue;
-//  }
+	private String value;
 
-  public String getValue() {
-	  return value;
-  }
+	public String getValue() {
+		return value;
+	}
 
-  public void setValue(String somePropertyValue) {
-	  this.value = somePropertyValue;
-  }
+	public void setValue(String somePropertyValue) {
+		this.value = somePropertyValue;
+	}
 }
