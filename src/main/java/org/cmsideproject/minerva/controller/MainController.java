@@ -39,19 +39,19 @@ public class MainController {
 	@Autowired
 	AliasSetting aliasSetting;
 
-//	@RequestMapping(value = "minerva/TicketSummary/insertOne", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-//	public MinervaResponse insertOne(@RequestParam String index, @RequestBody TicketSummarySpringDataDTO data)
-//			throws ErrorInputException, ParseException, IOException {
-//		MinervaResponse minervaResponse = new MinervaResponse();
-//		testTicketSumaryService.saveByDto(data);
-//		aliasSetting.setAlias(data);
-//		return minervaResponse;
-//	}
-	
+	/**
+	 * Insert ticket information.
+	 * 
+	 * @param data
+	 * @return
+	 * @throws ErrorInputException
+	 * @throws ParseException
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "minerva/TicketSummary/insert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse insert(@RequestBody List<Map<String, Object>> data)
 			throws ErrorInputException, ParseException, IOException {
-		
+
 		MinervaResponse minervaResponse = new MinervaResponse();
 		List<TicketSummarySpringDataDTO> dataList = this.listMapToListObject(data);
 		testTicketSumaryService.save(data);
@@ -59,9 +59,9 @@ public class MainController {
 		return minervaResponse;
 	}
 
-	@RequestMapping(value = "minerva/TicketSummary/getOne", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse getOne(@RequestParam String fromDate, @RequestParam String thrDate,
-			@RequestBody String ticketNumber) throws ParseException {
+	@RequestMapping(value = "minerva/TicketSummary/findByDate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse findByDate(@RequestParam String fromDate, @RequestParam String thrDate)
+			throws ParseException, InterruptedException, ExecutionException {
 		this.setDate(fromDate, thrDate);
 		MinervaResponse minervaResponse = new MinervaResponse();
 		List list = new ArrayList<>();
@@ -69,26 +69,10 @@ public class MainController {
 		for (int i = SearchDate.singleton.getFromYear(); i < SearchDate.singleton.getThrYear(); i++) {
 			for (int j = SearchDate.singleton.getFromMonth(); j < SearchDate.singleton.getThrMonth(); j++) {
 				index = Integer.toString(i) + Integer.toString(j);
-				suffix.setValue(index);
-				try {
-					list.add(testTicketSumaryService.findById(ticketNumber).get());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				list.add(testTicketSumaryService.getByAlias("ryan_" + index));
 			}
 		}
 
-		minervaResponse.setData(list);
-		return minervaResponse;
-	}
-
-	@RequestMapping(value = "minerva/TicketSummary/getAll", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse getAllByTicketNumber(@RequestParam String index)
-			throws ErrorInputException {
-		suffix.setValue(index.toLowerCase());
-		MinervaResponse minervaResponse = new MinervaResponse();
-		List list = new ArrayList<>();
-		list.add(testTicketSumaryService.findById(index).get());
 		minervaResponse.setData(list);
 		return minervaResponse;
 	}
@@ -102,6 +86,12 @@ public class MainController {
 		return minervaResponse;
 	}
 
+	/**
+	 * Set from/thr date
+	 * @param fromDate
+	 * @param thrDate
+	 * @throws ParseException
+	 */
 	private void setDate(String fromDate, String thrDate) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		Date frDate = sdf.parse(fromDate);
@@ -128,5 +118,5 @@ public class MainController {
 		}
 		return resultList;
 	}
-	
+
 }
