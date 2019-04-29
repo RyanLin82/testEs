@@ -103,14 +103,17 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	}
 
 	@Override
-	public List<TicketSummarySpringDataDTO> getByAlias(String aliasName) throws InterruptedException, ExecutionException {
+	public List getByAlias(String aliasName) throws InterruptedException, ExecutionException {
 		GetAliasesResponse r = client.admin().indices().getAliases(new GetAliasesRequest().aliases(aliasName)).get();
 
-//		for(Iterator<String> it = r.getAliases().keysIt(); it.hasNext();) {
-//			// HERE IS THE REALINDEXNAME
-//			String realIndexName = it.next();
-//		}
-		return new ArrayList<TicketSummarySpringDataDTO>();
+		List list = new ArrayList<>();
+		for(Iterator<String> it = r.getAliases().keysIt(); it.hasNext();) {
+			// HERE IS THE REALINDEXNAME
+			String realIndexName = it.next();
+			suffix.setValue(realIndexName.replaceFirst("test_ryan_", ""));
+			list.add(ticketRepository.findAll());
+		}
+		return list;
 	
 	}
 

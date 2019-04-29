@@ -48,11 +48,10 @@ public class MainController {
 //		return minervaResponse;
 //	}
 	
-	@RequestMapping(value = "minerva/TicketSummary/insertAll", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse insertAll(@RequestParam String index, @RequestBody List<Map<String, Object>> data)
+	@RequestMapping(value = "minerva/TicketSummary/insert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse insert(@RequestBody List<Map<String, Object>> data)
 			throws ErrorInputException, ParseException, IOException {
 		
-		System.out.println("1234444");
 		MinervaResponse minervaResponse = new MinervaResponse();
 		List<TicketSummarySpringDataDTO> dataList = this.listMapToListObject(data);
 		testTicketSumaryService.save(data);
@@ -86,10 +85,10 @@ public class MainController {
 	@RequestMapping(value = "minerva/TicketSummary/getAll", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse getAllByTicketNumber(@RequestParam String index)
 			throws ErrorInputException {
-		suffix.setValue(index);
+		suffix.setValue(index.toLowerCase());
 		MinervaResponse minervaResponse = new MinervaResponse();
 		List list = new ArrayList<>();
-		list.add(testTicketSumaryService.findByJira(index).get());
+		list.add(testTicketSumaryService.findById(index).get());
 		minervaResponse.setData(list);
 		return minervaResponse;
 	}

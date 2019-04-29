@@ -22,7 +22,7 @@ public interface TestTicketSumaryService {
 //	void saveByDto(Map<String, Object> dataList) throws ParseException;
 	
 //    void delete(TestTicketSumary ticket);
-	List<TicketSummarySpringDataDTO> getByAlias(String aliasName) throws InterruptedException, ExecutionException;
+	List getByAlias(String aliasName) throws InterruptedException, ExecutionException;
 
 //
 	Optional<List<TicketSummarySpringDataDTO>> findByJira(String id);
