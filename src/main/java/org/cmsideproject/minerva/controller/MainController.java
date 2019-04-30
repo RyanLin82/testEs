@@ -62,17 +62,23 @@ public class MainController {
 	@RequestMapping(value = "minerva/TicketSummary/findByDate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse findByDate(@RequestParam String fromDate, @RequestParam String thrDate)
 			throws ParseException, InterruptedException, ExecutionException {
-		this.setDate(fromDate, thrDate);
+//		this.setDate(fromDate, thrDate);
 		MinervaResponse minervaResponse = new MinervaResponse();
 		List list = new ArrayList<>();
-		String index;
-		for (int i = SearchDate.singleton.getFromYear(); i < SearchDate.singleton.getThrYear(); i++) {
-			for (int j = SearchDate.singleton.getFromMonth(); j < SearchDate.singleton.getThrMonth(); j++) {
-				index = Integer.toString(i) + Integer.toString(j);
-				list.add(testTicketSumaryService.getByAlias("ryan_" + index));
-			}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Date fr = sdf.parse(fromDate);
+		Date thr = sdf.parse(thrDate);
+		Calendar start = new GregorianCalendar();
+		start.setTime(fr);
+		Calendar end = Calendar.getInstance();
+		end.setTime(thr);
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMM");
+		for(Date temp = start.getTime() ; start.before(end); start.add(Calendar.MONTH, 1), temp = start.getTime()) {
+			System.out.println("ryan_" + sdf2.format(temp));
+			list.add(testTicketSumaryService.getByAlias("ryan_" + sdf2.format(temp)));
 		}
 
+		list.
 		minervaResponse.setData(list);
 		return minervaResponse;
 	}
@@ -88,6 +94,7 @@ public class MainController {
 
 	/**
 	 * Set from/thr date
+	 * 
 	 * @param fromDate
 	 * @param thrDate
 	 * @throws ParseException
