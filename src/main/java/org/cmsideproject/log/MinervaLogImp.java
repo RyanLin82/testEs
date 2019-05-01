@@ -62,5 +62,13 @@ public class MinervaLogImp implements MinervaLog {
 		log.info("\n timestamp: [{}] \n [{}] : [{}], \n [{}] : [{}] \n", new Date(), title1, value1,
 				title2, value2);
 	}
+	
+	@Override
+	public void info(String indexName, String method, Object data) {
+		// TODO Auto-generated method stub
+		log.info("\n timestamp: [{}] \n index name : [{}], \n method: [{}] \n data: [{}]", new Date(),
+				indexName, method, data);
+
+	}
 
 }

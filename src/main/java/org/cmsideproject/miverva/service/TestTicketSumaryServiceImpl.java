@@ -50,6 +50,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 			setIndex(data);
 			ticketRepository.save(data);
 			indices.add(indexName);
+			log.info(indexName, "update", data);
 		}
 	}
 //

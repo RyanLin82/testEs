@@ -47,4 +47,6 @@ public interface MinervaLog {
 
 	void info(String title1, String value1, String title2, String value2);
 
+	void info(String indexName, String method, Object data);
+
 }
