@@ -2,23 +2,14 @@ package org.cmsideproject.minerva.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.cmsideproject.component.AliasSetting;
-import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.MinervaResponse;
-import org.cmsideproject.minerva.entity.SearchDate;
-import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 import org.cmsideproject.miverva.service.TestTicketSumaryService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +23,6 @@ public class MainController {
 
 	@Autowired
 	private TestTicketSumaryService testTicketSumaryService;
-
-	@Autowired
-	private Suffix suffix;
 
 	@Autowired
 	AliasSetting aliasSetting;
@@ -53,53 +41,86 @@ public class MainController {
 			throws ErrorInputException, ParseException, IOException {
 
 		MinervaResponse minervaResponse = new MinervaResponse();
-		List<TicketSummarySpringDataDTO> dataList = this.listMapToListObject(data);
 		testTicketSumaryService.save(data);
-		aliasSetting.setAlias(dataList);
+		aliasSetting.setAlias(data);
 		return minervaResponse;
 	}
 
+	/**
+	 * Find the ticket information by fromDate and thrDate
+	 * @param fromDate
+	 * @param thrDate
+	 * @return
+	 * @throws ParseException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	@RequestMapping(value = "minerva/TicketSummary/findByDate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse findByDate(@RequestParam String fromDate, @RequestParam String thrDate)
 			throws ParseException, InterruptedException, ExecutionException {
 		MinervaResponse minervaResponse = new MinervaResponse();
-		List list = new ArrayList<>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		Date fr = sdf.parse(fromDate);
-		Date thr = sdf.parse(thrDate);
-		Calendar start = new GregorianCalendar();
-		start.setTime(fr);
-		Calendar end = Calendar.getInstance();
-		end.setTime(thr);
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMM");
-		for (Date temp = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1), temp = start.getTime()) {
-			System.out.println("ryan_" + sdf2.format(temp));
-			list.add(testTicketSumaryService.getByAlias("ryan_" + sdf2.format(temp)));
-		}
 
-		minervaResponse.setData(list);
+		minervaResponse.setData(testTicketSumaryService.getByDate(fromDate, thrDate));
+		
+		return minervaResponse;
+	}
+	
+	/**
+	 * Find the ticket information by ticketNumber
+	 * @param ticketNumber
+	 * @return
+	 * @throws ParseException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	@RequestMapping(value = "minerva/TicketSummary/findByTicketNumber", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse findByTicketNumber(@RequestParam String ticketNumber)
+			throws ParseException, InterruptedException, ExecutionException {
+		MinervaResponse minervaResponse = new MinervaResponse();
+
+		minervaResponse.setData(testTicketSumaryService.findByJira(ticketNumber).get());
+		
 		return minervaResponse;
 	}
 
+	/**
+	 * Update the ticket information
+	 * @param data
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws ErrorInputException
+	 * @throws ParseException
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "minerva/TicketSummary/update", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse update(@RequestBody List<Map<String, Object>> data)
 			throws InterruptedException, ExecutionException, ErrorInputException, ParseException, IOException {
 		MinervaResponse minervaResponse = new MinervaResponse();
-//		List<TicketSummarySpringDataDTO> dataList = this.listMapToListObject(data);
 		testTicketSumaryService.save(data);
-//		minervaResponse.setData(list);
 		return minervaResponse;
 	}
-
-	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
-
-		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
-		ModelMapper mapper2 = new ModelMapper();
-		for (Map<String, Object> map : dataList) {
-			TicketSummarySpringDataDTO ticket = mapper2.map(map, TicketSummarySpringDataDTO.class);
-			resultList.add(ticket);
-		}
-		return resultList;
+	
+	/**
+	 * Delete the ticket information.
+	 * @param data
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws ErrorInputException
+	 * @throws ParseException
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "minerva/TicketSummary/delete", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse delete(@RequestBody List<Map<String, Object>> data)
+			throws InterruptedException, ExecutionException, ErrorInputException, ParseException, IOException {
+		MinervaResponse minervaResponse = new MinervaResponse();
+		testTicketSumaryService.delete(data);
+		return minervaResponse;
 	}
+	
+	
+
+	
 
 }

@@ -8,26 +8,49 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.cmsideproject.exception.ErrorInputException;
-import org.cmsideproject.minerva.entity.TestTicketSumary;
 import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 
 public interface TestTicketSumaryService {
 
-//	TestTicketSumary save(TestTicketSumary ticket);
-//	
+	/**
+	 * Save the ticket information into Elasticsearch by spring data.
+	 * @param ticket
+	 * @throws ErrorInputException
+	 * @throws ParseException
+	 * @throws IOException
+	 */
 	void save(List<Map<String, Object>> ticket) throws ErrorInputException, ParseException, IOException;
 
-//	void saveByDto(List<Map<String, Object>> dataList) throws ErrorInputException, ParseException;
-//
-//	void saveByDto(Map<String, Object> dataList) throws ParseException;
-	
-//    void delete(TestTicketSumary ticket);
-	List getByAlias(String aliasName) throws InterruptedException, ExecutionException;
+	/**
+	 * Delete the ticket information into Elasticsearch by spring data.
+	 * @param ticket
+	 */
+	void delete(List<Map<String, Object>> ticket);
 
-//
+	/**
+	 * Get all ticket information within fromDate and thrDate by spring data.
+	 * @param fromDate
+	 * @param thrDate
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws ParseException
+	 */
+	List getByDate(String fromDate, String thrDate)  throws InterruptedException, ExecutionException, ParseException;
+
+	/**
+	 * Use the ticket number to get the ticket information by spring data
+	 * @param id
+	 * @return
+	 */
 	Optional<List<TicketSummarySpringDataDTO>> findByJira(String id);
 
-	Optional<TicketSummarySpringDataDTO> findById(String id);
-//
-//    Iterable<TestTicketSumary> findAll();
+	/**
+	 * Use alias to get the ticket information by spring data
+	 * @param aliasName
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	List getByAlias(String aliasName) throws InterruptedException, ExecutionException;
 }

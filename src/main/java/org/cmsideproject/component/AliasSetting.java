@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmsideproject.log.MinervaLog;
@@ -13,6 +15,7 @@ import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
 import org.elasticsearch.client.transport.TransportClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,14 +61,25 @@ public class AliasSetting {
 		log.info("index", index, "alias", alias, data);
 	}
 
-	public void setAlias(List<TicketSummarySpringDataDTO> data) throws ParseException {
+	public void setAlias(List<Map<String, Object>> data) throws ParseException {
 
+		List<TicketSummarySpringDataDTO> datalist = this.listMapToListObject(data);
 		if(data == null || data.size() == 0) {
 			return;
 		}
-		for(TicketSummarySpringDataDTO dto : data) {
+		for(TicketSummarySpringDataDTO dto : datalist) {
 			this.setAlias(dto);	
 		}
+	}
+	
+	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
+		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
+		ModelMapper mapper2 = new ModelMapper();
+		for (Map<String, Object> map : dataList) {
+			TicketSummarySpringDataDTO ticket = mapper2.map(map, TicketSummarySpringDataDTO.class);
+			resultList.add(ticket);
+		}
+		return resultList;
 	}
 	
 }

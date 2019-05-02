@@ -2,7 +2,11 @@ package org.cmsideproject.miverva.service;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +36,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 
 	@Autowired
 	TransportClient client;
-	
+
 	@Autowired
 	private Suffix suffix;
 
@@ -41,6 +45,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 		this.ticketRepository = ticketRepository;
 	}
 
+	@Override
 	public void save(List<Map<String, Object>> datas) throws ErrorInputException, ParseException, IOException {
 		List<TicketSummarySpringDataDTO> datalist = null;
 		datalist = this.listMapToListObject(datas);
@@ -53,13 +58,61 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 			log.info(indexName, "update", data);
 		}
 	}
-//
-//	public void saveByDto(List<Map<String, Object>> dataList) throws ErrorInputException, ParseException {
-//
-//		for (TicketSummarySpringDataDTO data : dataList) {
-//			this.saveByDto(data);
-//		}
-//	}
+
+	@Override
+	public Optional<List<TicketSummarySpringDataDTO>> findByJira(String id) {
+		return ticketRepository.findByJira(id);
+	}
+
+	@Override
+	public List getByDate(String fromDate, String thrDate)
+			throws InterruptedException, ExecutionException, ParseException {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Date fr = sdf.parse(fromDate);
+		Date thr = sdf.parse(thrDate);
+		Calendar start = new GregorianCalendar();
+		start.setTime(fr);
+		Calendar end = Calendar.getInstance();
+		end.setTime(thr);
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMM");
+
+		List list = new ArrayList<>();
+
+		for (Date temp = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1), temp = start.getTime()) {
+			System.out.println("ryan_" + sdf2.format(temp));
+
+			list.add(this.getByAlias("ryan_" + sdf2.format(temp)));
+		}
+
+		return list;
+
+	}
+
+	@Override
+	public List<TicketSummarySpringDataDTO> getByAlias(String aliasName)
+			throws InterruptedException, ExecutionException {
+		GetAliasesResponse r = client.admin().indices().getAliases(new GetAliasesRequest().aliases(aliasName)).get();
+
+		List list = new ArrayList<>();
+		for (Iterator<String> it = r.getAliases().keysIt(); it.hasNext();) {
+			// HERE IS THE REALINDEXNAME
+			String realIndexName = it.next();
+			suffix.setValue(realIndexName.replaceFirst("test_ryan_", ""));
+			list.add(ticketRepository.findAll());
+		}
+		return list;
+	}
+
+	@Override
+	public void delete(List<Map<String, Object>> tickets) {
+
+		List<TicketSummarySpringDataDTO> ticketList = this.listMapToListObject(tickets);
+
+		for (TicketSummarySpringDataDTO ticket : ticketList) {
+			ticketRepository.delete(ticket);
+		}
+	}
 
 	private void setIndex(TicketSummarySpringDataDTO data) throws ParseException {
 
@@ -72,14 +125,6 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 		return data.getJira();
 	}
 
-	public Optional<List<TicketSummarySpringDataDTO>> findByJira(String id) {
-		return ticketRepository.findByJira(id);
-	}
-
-	public Optional<TicketSummarySpringDataDTO> findById(String id) {
-		return ticketRepository.findById(id);
-	}
-
 	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
 
 		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
@@ -90,38 +135,4 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 		}
 		return resultList;
 	}
-
-	private List<Map<String, Object>> mapKeyToLowercase(List<Map<String, Object>> dataList) {
-
-		List list = new ArrayList<>();
-
-		for (Map<String, Object> map : dataList) {
-			Map<String, Object> nodeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-			nodeMap.putAll(map);
-			list.add(nodeMap);
-		}
-		return list;
-	}
-
-	@Override
-	public List getByAlias(String aliasName) throws InterruptedException, ExecutionException {
-		GetAliasesResponse r = client.admin().indices().getAliases(new GetAliasesRequest().aliases(aliasName)).get();
-
-		List list = new ArrayList<>();
-		for(Iterator<String> it = r.getAliases().keysIt(); it.hasNext();) {
-			// HERE IS THE REALINDEXNAME
-			String realIndexName = it.next();
-			suffix.setValue(realIndexName.replaceFirst("test_ryan_", ""));
-			list.add(ticketRepository.findAll());
-		}
-		return list;
-	
-	}
-
-//	@Override
-//	public void saveByDto(Map<String, Object> data) throws ParseException {
-//		setIndex(data);
-//		ticketRepository.save(data);
-//	}
-
 }
