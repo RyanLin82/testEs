@@ -1,4 +1,4 @@
-package org.cmsideproject.miverva.service;
+package org.cmsideproject.minerva.service;
 
 import java.io.IOException;
 import java.text.ParseException;

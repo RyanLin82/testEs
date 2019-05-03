@@ -1,7 +1,7 @@
 package org.cmsideproject.minerva.restapi;
 
 import java.io.IOException;
-
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.cmsideproject.Application;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

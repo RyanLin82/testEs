@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutionException;
 import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.MinervaResponse;
-import org.cmsideproject.miverva.service.TestTicketSumaryService;
+import org.cmsideproject.minerva.service.TestTicketSumaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +55,7 @@ public class MainController {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	@RequestMapping(value = "minerva/TicketSummary/findByDate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "TicketSummary/findByDate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse findByDate(@RequestParam String fromDate, @RequestParam String thrDate)
 			throws ParseException, InterruptedException, ExecutionException {
 		MinervaResponse minervaResponse = new MinervaResponse();
