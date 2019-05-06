@@ -10,6 +10,7 @@ import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.MinervaResponse;
 import org.cmsideproject.minerva.service.TestTicketSumaryService;
+import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,9 @@ public class MainController {
 
 	@Autowired
 	AliasSetting aliasSetting;
+	
+	@Autowired
+	TransportClient client;
 
 	/**
 	 * Insert ticket information.
@@ -101,6 +105,16 @@ public class MainController {
 		return minervaResponse;
 	}
 	
+	
+	@RequestMapping(value = "minerva/TicketSummary/setAlias", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse setAlias(@RequestParam String aliasName, @RequestParam String indexName)
+			throws InterruptedException, ExecutionException, ErrorInputException, ParseException, IOException {
+		MinervaResponse minervaResponse = new MinervaResponse();
+		aliasSetting.setAlias(indexName, aliasName);
+		return minervaResponse;
+	}
+	
+	
 	/**
 	 * Delete the ticket information.
 	 * @param data
@@ -119,6 +133,15 @@ public class MainController {
 		return minervaResponse;
 	}
 	
+//	@RequestMapping(value = "TicketSummary/test2", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+//	public MinervaResponse test(){
+//		MinervaResponse minervaResponse = new MinervaResponse();
+//		
+//		System.out.println("testtt");
+//		
+//		
+//		return minervaResponse;
+//	}
 	
 
 	

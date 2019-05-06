@@ -12,6 +12,10 @@ public class ErrorInputException extends MinervaException {
 	public ErrorInputException(String inputData, String msg) {
 		super(CODE, msg, inputData);
 	}
+	
+	public ErrorInputException(String msg) {
+		super(CODE, msg);
+	}
 
 	@Override
 	public String getCode() {
