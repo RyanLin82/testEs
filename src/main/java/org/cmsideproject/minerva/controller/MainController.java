@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.cmsideproject.component.AliasSetting;
+import org.cmsideproject.component.TicketIndices;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.MinervaResponse;
 import org.cmsideproject.minerva.service.TestTicketSumaryService;
@@ -30,6 +31,9 @@ public class MainController {
 	
 	@Autowired
 	TransportClient client;
+	
+	@Autowired
+	TicketIndices ticketIndices;
 
 	/**
 	 * Insert ticket information.
@@ -133,15 +137,19 @@ public class MainController {
 		return minervaResponse;
 	}
 	
-//	@RequestMapping(value = "TicketSummary/test2", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-//	public MinervaResponse test(){
-//		MinervaResponse minervaResponse = new MinervaResponse();
-//		
-//		System.out.println("testtt");
-//		
-//		
-//		return minervaResponse;
-//	}
+	@RequestMapping(value = "TicketSummary/test2", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse test() throws IOException{
+		MinervaResponse minervaResponse = new MinervaResponse();
+		
+		
+		ticketIndices.setAliasMappingIndex();
+		System.out.println("testtt");
+//		ticketIndices.getAlias();
+//		ticketIndices.getAliasIndicesMapping();
+//		ticketIndices.getIndicesName()
+		
+		return minervaResponse;
+	}
 	
 
 	

@@ -122,10 +122,11 @@ public class EsConfig {
 	}
 
 	@Bean
-	public ClusterHealthResponse restHighLevelClient() throws IOException {
+	public RestHighLevelClient restClient() {
 		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));
 
+		
 		RestClientBuilder builder = RestClient.builder(new HttpHost(EsHost, esPort1, "https"))
 				.setHttpClientConfigCallback(new HttpClientConfigCallback() {
 					@Override
@@ -134,7 +135,13 @@ public class EsConfig {
 					}
 				});
 
-		RestHighLevelClient client = new org.elasticsearch.client.RestHighLevelClient(builder);
+		return new org.elasticsearch.client.RestHighLevelClient(builder);
+	}
+	
+	@Bean
+	public ClusterHealthResponse restHighLevelClient() throws IOException {
+
+		RestHighLevelClient client = this.restClient();
 
 		ClusterHealthRequest requests = new ClusterHealthRequest();
 		ClusterHealthResponse response = client.cluster().health(requests, RequestOptions.DEFAULT);
