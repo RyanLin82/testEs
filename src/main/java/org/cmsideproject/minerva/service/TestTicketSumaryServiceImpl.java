@@ -1,6 +1,7 @@
 package org.cmsideproject.minerva.service;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang3.StringUtils;
+import org.cmsideproject.component.TicketIndices;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
@@ -40,21 +43,31 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	private Suffix suffix;
 
 	@Autowired
+	private TicketIndices ticketIndices;
+
+	@Autowired
 	public void setTicketRepository(TestTicketSummaryRepository ticketRepository) {
 		this.ticketRepository = ticketRepository;
 	}
 
 	@Override
-	public void save(List<Map<String, Object>> datas) throws ErrorInputException, ParseException, IOException {
-		List<TicketSummarySpringDataDTO> datalist = null;
-		datalist = this.listMapToListObject(datas);
+	public void save(List<Map<String, Object>> data) throws ErrorInputException, ParseException, IOException {
+		List<TicketSummarySpringDataDTO> datalist = new ArrayList<>();
+		datalist = this.listMapToListObject(data);
+		this.saveByEntity(datalist);
+	}
+
+	public void saveByEntity(List<TicketSummarySpringDataDTO> data)
+			throws ErrorInputException, ParseException, IOException {
+		data = this.removeDuplicateDataInEs(data);
 		List<String> indices = new ArrayList<>();
-		for (TicketSummarySpringDataDTO data : datalist) {
-			String indexName = "test_ryan_" + this.getIndex(data);
-			setIndex(data);
-			ticketRepository.save(data);
+		for (TicketSummarySpringDataDTO ticket : data) {
+			String indexName = "test_ryan_" + this.getIndex(ticket);
+//			setIndex(ticket);
+			this.setIndexByMonth(ticket);
+			ticketRepository.save(ticket);
 			indices.add(indexName);
-			log.info(indexName, "update", data);
+			log.info(indexName, "update", ticket);
 		}
 	}
 
@@ -113,9 +126,24 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 		}
 	}
 
+	private String setIndexByMonth(TicketSummarySpringDataDTO data) throws ErrorInputException, ParseException {
+
+		if (StringUtils.isEmpty(data.getJira()) || StringUtils.isEmpty(data.getDoneDate())) {
+			throw new ErrorInputException("Alias setting miss ticketNumber or doneDate");
+		}
+
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat df2 = new SimpleDateFormat("yyyyMM");
+
+		String indexName = df2.format(df.parse(data.getDoneDate())).toLowerCase();
+		suffix.setValue(indexName);
+		return indexName;
+
+	}
+
 	private void setIndex(TicketSummarySpringDataDTO data) throws ParseException {
 
-		suffix.setValue(this.getIndex(data).toLowerCase());
+		suffix.setValue(data.getJira().toLowerCase());
 
 	}
 
@@ -134,4 +162,16 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 		}
 		return resultList;
 	}
+
+	private List<TicketSummarySpringDataDTO> removeDuplicateDataInEs(List<TicketSummarySpringDataDTO> data) {
+		List<TicketSummarySpringDataDTO> returnData = new ArrayList<>();
+		for (TicketSummarySpringDataDTO ticket : data) {
+			if (ticketIndices.existIndices(ticket.getJira())) {
+				continue;
+			}
+			returnData.add(ticket);
+		}
+		return returnData;
+	}
+
 }

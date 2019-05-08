@@ -24,39 +24,41 @@ public class AliasSetting {
 
 	private MinervaLog log = new MinervaLogImp(this.getClass());
 
-	private String indexNamePattern = "test_ryan_";
-	
-	private String aliasPattern = "ryan_";
+	private final String indexNamePattern = "test_ryan_";
+
+	private final String aliasPattern = "ryan_";
 	@Autowired
 	TransportClient client;
 
 	/**
 	 * Set index's alias
+	 * 
 	 * @param indexName
 	 * @param aliasName
 	 * @throws IOException
-	 * @throws ErrorInputException 
+	 * @throws ErrorInputException
 	 */
 	public void setAlias(String indexName, String aliasName) throws IOException, ErrorInputException {
 
-		if(StringUtils.isEmpty(indexName) || StringUtils.isEmpty(aliasName)) {
+		if (StringUtils.isEmpty(indexName) || StringUtils.isEmpty(aliasName)) {
 			throw new ErrorInputException("Alias setting miss indexName or aliasName");
 		}
-		
+
 		client.admin().indices().prepareAliases().addAlias(indexName, aliasName).execute();
 		log.info("IndexName", indexName, "aliasName", aliasName);
 	}
 
 	/**
 	 * Set list of indices' alias.
+	 * 
 	 * @param indexName
 	 * @param aliasName
 	 * @throws IOException
-	 * @throws ErrorInputException 
+	 * @throws ErrorInputException
 	 */
 	public void setAlias(List<String> indexName, String aliasName) throws IOException, ErrorInputException {
 
-		if(indexName == null || indexName.size() !=0 || StringUtils.isEmpty(aliasName)) {
+		if (indexName == null || indexName.size() != 0 || StringUtils.isEmpty(aliasName)) {
 			throw new ErrorInputException("Alias setting miss indexName or aliasName");
 		}
 		client.admin().indices().prepareAliases().addAlias(indexName.toArray(new String[0]), aliasName).execute();
@@ -65,49 +67,52 @@ public class AliasSetting {
 
 	/**
 	 * Set data's alias
+	 * 
 	 * @param data
 	 * @throws ParseException
-	 * @throws ErrorInputException 
+	 * @throws ErrorInputException
 	 */
 	public void setAlias(TicketSummarySpringDataDTO data) throws ParseException, ErrorInputException {
 
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		DateFormat df2 = new SimpleDateFormat("yyyyMM");
+		DateFormat df3 = new SimpleDateFormat("yyyy");
 
-		if(StringUtils.isEmpty(data.getJira()) || StringUtils.isEmpty(data.getDoneDate())) {
+		if (StringUtils.isEmpty(data.getJira()) || StringUtils.isEmpty(data.getDoneDate())) {
 			throw new ErrorInputException("Alias setting miss ticketNumber or doneDate");
 		}
-		
-		
-		String index = indexNamePattern + data.getJira().toLowerCase();
-		String alias = aliasPattern + df2.format(df.parse(data.getDoneDate()));
+
+		String index = indexNamePattern + df2.format(df.parse(data.getDoneDate())).toLowerCase();
+		String alias = aliasPattern + df3.format(df2.format(df.parse(data.getDoneDate())));
 
 		AliasActions action = new AliasActions(AliasActions.Type.ADD).index(index).alias(alias);
 
 		client.admin().indices().prepareAliases().addAliasAction(action).execute();
-		
+
 		log.info("index", index, "alias", alias, data);
 	}
 
 	/**
 	 * Set data's alias.
+	 * 
 	 * @param data
 	 * @throws ParseException
-	 * @throws ErrorInputException 
+	 * @throws ErrorInputException
 	 */
 	public void setAlias(List<Map<String, Object>> data) throws ParseException, ErrorInputException {
 
 		List<TicketSummarySpringDataDTO> datalist = this.listMapToListObject(data);
-		if(data == null || data.size() == 0) {
+		if (data == null || data.size() == 0) {
 			throw new ErrorInputException("Alias setting miss ticket Information");
 		}
-		for(TicketSummarySpringDataDTO dto : datalist) {
-			this.setAlias(dto);	
+		for (TicketSummarySpringDataDTO dto : datalist) {
+			this.setAlias(dto);
 		}
 	}
-	
+
 	/**
 	 * list map to list object
+	 * 
 	 * @param dataList
 	 * @return
 	 */
@@ -120,5 +125,5 @@ public class AliasSetting {
 		}
 		return resultList;
 	}
-	
+
 }

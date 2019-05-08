@@ -46,7 +46,7 @@ public class MainControllerTest extends AbstractTest {
 				"            \"doneDate\": \"2020-01-03\"," + 
 				"            \"exception\": \"0.00\"," + 
 				"            \"exceptionTotalTime\": \"0.00\"," + 
-				"            \"jira\": \"CZ-10001\"," + 
+				"            \"jira\": \"CZ-20001\"," + 
 				"            \"keyword\": \"\"," + 
 				"            \"label\": \"\"," +  
 				"            \"needMoreInfo\": \"1\"," + 

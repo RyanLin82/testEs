@@ -11,7 +11,6 @@ import org.cmsideproject.component.TicketIndices;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.MinervaResponse;
 import org.cmsideproject.minerva.service.TestTicketSumaryService;
-import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,10 +27,7 @@ public class MainController {
 
 	@Autowired
 	AliasSetting aliasSetting;
-	
-	@Autowired
-	TransportClient client;
-	
+
 	@Autowired
 	TicketIndices ticketIndices;
 
@@ -44,7 +40,7 @@ public class MainController {
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "minerva/TicketSummary/insert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "TicketSummary/insert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse insert(@RequestBody List<Map<String, Object>> data)
 			throws ErrorInputException, ParseException, IOException {
 
@@ -56,6 +52,7 @@ public class MainController {
 
 	/**
 	 * Find the ticket information by fromDate and thrDate
+	 * 
 	 * @param fromDate
 	 * @param thrDate
 	 * @return
@@ -67,32 +64,29 @@ public class MainController {
 	public MinervaResponse findByDate(@RequestParam String fromDate, @RequestParam String thrDate)
 			throws ParseException, InterruptedException, ExecutionException {
 		MinervaResponse minervaResponse = new MinervaResponse();
-
 		minervaResponse.setData(testTicketSumaryService.getByDate(fromDate, thrDate));
-		
 		return minervaResponse;
 	}
-	
+
 	/**
 	 * Find the ticket information by ticketNumber
+	 * 
 	 * @param ticketNumber
 	 * @return
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	@RequestMapping(value = "minerva/TicketSummary/findByTicketNumber", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse findByTicketNumber(@RequestParam String ticketNumber)
-			throws ParseException, InterruptedException, ExecutionException {
+	@RequestMapping(value = "TicketSummary/findByTicketNumber", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse findByTicketNumber(@RequestParam String ticketNumber) {
 		MinervaResponse minervaResponse = new MinervaResponse();
-
 		minervaResponse.setData(testTicketSumaryService.findByJira(ticketNumber).get());
-		
 		return minervaResponse;
 	}
 
 	/**
 	 * Update the ticket information
+	 * 
 	 * @param data
 	 * @return
 	 * @throws InterruptedException
@@ -101,57 +95,32 @@ public class MainController {
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "minerva/TicketSummary/update", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "TicketSummary/update", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse update(@RequestBody List<Map<String, Object>> data)
-			throws InterruptedException, ExecutionException, ErrorInputException, ParseException, IOException {
+			throws ErrorInputException, ParseException, IOException {
 		MinervaResponse minervaResponse = new MinervaResponse();
 		testTicketSumaryService.save(data);
 		return minervaResponse;
 	}
-	
-	
-	@RequestMapping(value = "minerva/TicketSummary/setAlias", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+
+	@RequestMapping(value = "TicketSummary/setAlias", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse setAlias(@RequestParam String aliasName, @RequestParam String indexName)
-			throws InterruptedException, ExecutionException, ErrorInputException, ParseException, IOException {
+			throws ErrorInputException, IOException {
 		MinervaResponse minervaResponse = new MinervaResponse();
 		aliasSetting.setAlias(indexName, aliasName);
 		return minervaResponse;
 	}
-	
-	
+
 	/**
 	 * Delete the ticket information.
+	 * 
 	 * @param data
 	 * @return
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 * @throws ErrorInputException
-	 * @throws ParseException
-	 * @throws IOException
 	 */
-	@RequestMapping(value = "minerva/TicketSummary/delete", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse delete(@RequestBody List<Map<String, Object>> data)
-			throws InterruptedException, ExecutionException, ErrorInputException, ParseException, IOException {
+	@RequestMapping(value = "TicketSummary/delete", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse delete(@RequestBody List<Map<String, Object>> data) {
 		MinervaResponse minervaResponse = new MinervaResponse();
 		testTicketSumaryService.delete(data);
 		return minervaResponse;
 	}
-	
-	@RequestMapping(value = "TicketSummary/test2", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public MinervaResponse test() throws IOException{
-		MinervaResponse minervaResponse = new MinervaResponse();
-		
-		
-		ticketIndices.setAliasMappingIndex();
-		System.out.println("testtt");
-//		ticketIndices.getAlias();
-//		ticketIndices.getAliasIndicesMapping();
-//		ticketIndices.getIndicesName()
-		
-		return minervaResponse;
-	}
-	
-
-	
-
 }
