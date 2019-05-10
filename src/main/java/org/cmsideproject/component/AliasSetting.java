@@ -64,6 +64,25 @@ public class AliasSetting {
 		client.admin().indices().prepareAliases().addAlias(indexName.toArray(new String[0]), aliasName).execute();
 		log.info("IndexName", indexName.toString(), "aliasName", aliasName);
 	}
+	
+	/**
+	 * Set list of indices' alias.
+	 * 
+	 * @param indexName
+	 * @param aliasName
+	 * @throws IOException
+	 * @throws ErrorInputException
+	 * @throws ParseException 
+	 */
+	public void setAliasByEntity(List<TicketSummarySpringDataDTO> indexName) throws IOException, ErrorInputException, ParseException {
+
+		if (indexName == null || indexName.size() == 0) {
+			throw new ErrorInputException("Alias setting miss indexName or aliasName");
+		}
+		for (TicketSummarySpringDataDTO dto : indexName) {
+			this.setAlias(dto);
+		}
+	}
 
 	/**
 	 * Set data's alias
@@ -83,7 +102,7 @@ public class AliasSetting {
 		}
 
 		String index = indexNamePattern + df2.format(df.parse(data.getDoneDate())).toLowerCase();
-		String alias = aliasPattern + df3.format(df2.format(df.parse(data.getDoneDate())));
+		String alias = aliasPattern + df3.format(df3.parse(df2.format(df.parse(data.getDoneDate()))));
 
 		AliasActions action = new AliasActions(AliasActions.Type.ADD).index(index).alias(alias);
 

@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cmsideproject.component.AliasSetting;
 import org.cmsideproject.component.TicketIndices;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
@@ -41,6 +42,9 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 
 	@Autowired
 	private Suffix suffix;
+	
+	@Autowired
+	AliasSetting aliasSetting;
 
 	@Autowired
 	private TicketIndices ticketIndices;
@@ -69,6 +73,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 			indices.add(indexName);
 			log.info(indexName, "update", ticket);
 		}
+		
 	}
 
 	@Override
@@ -166,7 +171,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	private List<TicketSummarySpringDataDTO> removeDuplicateDataInEs(List<TicketSummarySpringDataDTO> data) {
 		List<TicketSummarySpringDataDTO> returnData = new ArrayList<>();
 		for (TicketSummarySpringDataDTO ticket : data) {
-			if (ticketIndices.existIndices(ticket.getJira())) {
+			if (ticketIndices.hasDocument(ticket.getJira())) {
 				continue;
 			}
 			returnData.add(ticket);
