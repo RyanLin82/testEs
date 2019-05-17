@@ -1,6 +1,6 @@
 package org.cmsideproject.log;
 
-import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
+import org.cmsideproject.minerva.entity.TicketSummary;
 
 public interface MinervaLog {
 

@@ -16,12 +16,12 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmsideproject.component.AliasSetting;
-import org.cmsideproject.component.TicketIndices;
+import org.cmsideproject.component.TicketIndicesAlias;
 import org.cmsideproject.config.Suffix;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLogImp;
-import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
-import org.cmsideproject.minerva.repo.TestTicketSummaryRepository;
+import org.cmsideproject.minerva.entity.TicketSummary;
+import org.cmsideproject.minerva.repo.SummaryRepository;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.elasticsearch.client.transport.TransportClient;
@@ -30,12 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
+public class TicketSumaryServiceImpl implements TicketSumaryService {
 
 	MinervaLogImp log = new MinervaLogImp(this.getClass());
 
 	@Autowired
-	private TestTicketSummaryRepository ticketRepository;
+	private SummaryRepository ticketRepository;
 
 	@Autowired
 	TransportClient client;
@@ -47,25 +47,25 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	AliasSetting aliasSetting;
 
 	@Autowired
-	private TicketIndices ticketIndices;
+	private TicketIndicesAlias ticketIndices;
 
 	@Autowired
-	public void setTicketRepository(TestTicketSummaryRepository ticketRepository) {
+	public void setTicketRepository(SummaryRepository ticketRepository) {
 		this.ticketRepository = ticketRepository;
 	}
 
 	@Override
 	public void save(List<Map<String, Object>> data) throws ErrorInputException, ParseException, IOException {
-		List<TicketSummarySpringDataDTO> datalist = new ArrayList<>();
+		List<TicketSummary> datalist = new ArrayList<>();
 		datalist = this.listMapToListObject(data);
 		this.saveByEntity(datalist);
 	}
 
-	public void saveByEntity(List<TicketSummarySpringDataDTO> data)
+	public void saveByEntity(List<TicketSummary> data)
 			throws ErrorInputException, ParseException, IOException {
 		data = this.removeDuplicateDataInEs(data);
 		List<String> indices = new ArrayList<>();
-		for (TicketSummarySpringDataDTO ticket : data) {
+		for (TicketSummary ticket : data) {
 			String indexName = "test_ryan_" + this.getIndex(ticket);
 //			setIndex(ticket);
 			this.setIndexByMonth(ticket);
@@ -77,7 +77,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	}
 
 	@Override
-	public Optional<List<TicketSummarySpringDataDTO>> findByJira(String id) {
+	public Optional<List<TicketSummary>> findByJira(String id) {
 		return ticketRepository.findByJira(id);
 	}
 
@@ -107,7 +107,7 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	}
 
 	@Override
-	public List<TicketSummarySpringDataDTO> getByAlias(String aliasName)
+	public List<TicketSummary> getByAlias(String aliasName)
 			throws InterruptedException, ExecutionException {
 		GetAliasesResponse r = client.admin().indices().getAliases(new GetAliasesRequest().aliases(aliasName)).get();
 
@@ -124,14 +124,14 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 	@Override
 	public void delete(List<Map<String, Object>> tickets) {
 
-		List<TicketSummarySpringDataDTO> ticketList = this.listMapToListObject(tickets);
+		List<TicketSummary> ticketList = this.listMapToListObject(tickets);
 
-		for (TicketSummarySpringDataDTO ticket : ticketList) {
+		for (TicketSummary ticket : ticketList) {
 			ticketRepository.delete(ticket);
 		}
 	}
 
-	private String setIndexByMonth(TicketSummarySpringDataDTO data) throws ErrorInputException, ParseException {
+	private String setIndexByMonth(TicketSummary data) throws ErrorInputException, ParseException {
 
 		if (StringUtils.isEmpty(data.getJira()) || StringUtils.isEmpty(data.getDoneDate())) {
 			throw new ErrorInputException("Alias setting miss ticketNumber or doneDate");
@@ -146,31 +146,31 @@ public class TestTicketSumaryServiceImpl implements TestTicketSumaryService {
 
 	}
 
-	private void setIndex(TicketSummarySpringDataDTO data) throws ParseException {
+	private void setIndex(TicketSummary data) throws ParseException {
 
 		suffix.setValue(data.getJira().toLowerCase());
 
 	}
 
-	private String getIndex(TicketSummarySpringDataDTO data) {
+	private String getIndex(TicketSummary data) {
 
 		return data.getJira();
 	}
 
-	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
+	private List<TicketSummary> listMapToListObject(List<Map<String, Object>> dataList) {
 
-		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
+		List<TicketSummary> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
 		for (Map<String, Object> map : dataList) {
-			TicketSummarySpringDataDTO ticket = mapper2.map(map, TicketSummarySpringDataDTO.class);
+			TicketSummary ticket = mapper2.map(map, TicketSummary.class);
 			resultList.add(ticket);
 		}
 		return resultList;
 	}
 
-	private List<TicketSummarySpringDataDTO> removeDuplicateDataInEs(List<TicketSummarySpringDataDTO> data) {
-		List<TicketSummarySpringDataDTO> returnData = new ArrayList<>();
-		for (TicketSummarySpringDataDTO ticket : data) {
+	private List<TicketSummary> removeDuplicateDataInEs(List<TicketSummary> data) {
+		List<TicketSummary> returnData = new ArrayList<>();
+		for (TicketSummary ticket : data) {
 			if (ticketIndices.hasDocument(ticket.getJira())) {
 				continue;
 			}

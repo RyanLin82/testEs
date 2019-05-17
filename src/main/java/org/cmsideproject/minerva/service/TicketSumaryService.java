@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.cmsideproject.exception.ErrorInputException;
-import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
+import org.cmsideproject.minerva.entity.TicketSummary;
 
-public interface TestTicketSumaryService {
+public interface TicketSumaryService {
 
 	/**
 	 * Save the ticket information into Elasticsearch by spring data.
@@ -43,7 +43,7 @@ public interface TestTicketSumaryService {
 	 * @param id
 	 * @return
 	 */
-	Optional<List<TicketSummarySpringDataDTO>> findByJira(String id);
+	Optional<List<TicketSummary>> findByJira(String id);
 
 	/**
 	 * Use alias to get the ticket information by spring data

@@ -5,7 +5,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Document(indexName = "test_ryan_#{suffix.getValue()}", type = "_doc", createIndex = true)
 //@Document(indexName = "ryan_springdata_sum_201809", type = "_doc", createIndex = true)
-public class TicketSummarySpringDataDTO {
+public class TicketSummary {
 
 //	@Id
 //	private String id;

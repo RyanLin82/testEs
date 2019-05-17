@@ -2,18 +2,15 @@ package org.cmsideproject.minerva.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.cmsideproject.component.AliasSetting;
-import org.cmsideproject.component.TicketIndices;
+import org.cmsideproject.component.TicketIndicesAlias;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.minerva.entity.MinervaResponse;
-import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
-import org.cmsideproject.minerva.service.TestTicketSumaryService;
-import org.modelmapper.ModelMapper;
+import org.cmsideproject.minerva.service.TicketSumaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,13 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class MainController {
 
 	@Autowired
-	private TestTicketSumaryService testTicketSumaryService;
+	private TicketSumaryService testTicketSumaryService;
 
 	@Autowired
 	AliasSetting aliasSetting;
 
 	@Autowired
-	TicketIndices ticketIndices;
+	TicketIndicesAlias ticketIndices;
 
 	/**
 	 * Insert ticket information.
@@ -127,6 +124,23 @@ public class MainController {
 	public MinervaResponse delete(@RequestBody List<Map<String, Object>> data) {
 		MinervaResponse minervaResponse = new MinervaResponse();
 		testTicketSumaryService.delete(data);
+		return minervaResponse;
+	}
+	
+	/**
+	 * Delete the ticket information.
+	 * 
+	 * @param data
+	 * @return
+	 */
+	@RequestMapping(value = "TicketSummary/test", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse test() {
+		MinervaResponse minervaResponse = new MinervaResponse();
+
+		ticketIndices.getAlias();
+		ticketIndices.getAliasIndicesMapping();
+		ticketIndices.getIndexTicketNumMapping();
+		ticketIndices.getIndicesName();
 		return minervaResponse;
 	}
 }

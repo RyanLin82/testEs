@@ -1,4 +1,4 @@
-package org.cmsideproject.minerva.restapi;
+package org.cmsideproject.minerva.integration.restapi;
 
 import java.io.IOException;
 

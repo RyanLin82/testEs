@@ -13,7 +13,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.cmsideproject.component.AliasSetting;
-import org.cmsideproject.component.TicketIndices;
+import org.cmsideproject.component.TicketIndicesAlias;
 import org.cmsideproject.exception.DTOParseFailException;
 import org.cmsideproject.exception.ElasticSearchRequestException;
 import org.cmsideproject.exception.ErrorInputException;
@@ -30,13 +30,11 @@ public class MinervaAccessAspect {
 	
 	private MinervaLogImp logger1 = new MinervaLogImp(this.getClass());
 	
-	MinervaResponse resJson = null;
-	
 	@Autowired
 	AliasSetting aliasSetting;
 	
 	@Autowired
-	TicketIndices ticketIndices;
+	TicketIndicesAlias ticketIndices;
  
 	@Before("execution(* org.cmsideproject.minerva.controller.*.*(..))")
 	public void before(JoinPoint joinPoint) {
@@ -54,7 +52,7 @@ public class MinervaAccessAspect {
 		logger.info(" \n =======================");
 	}
 
-	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.find*(..))")
+	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.find*(..)) || execution(* org.cmsideproject.minerva.controller.*.add*(..))")
 	public MinervaResponse around(ProceedingJoinPoint joinPoint) {
 		MinervaResponse resJson = new MinervaResponse();
 		MinervaResponseStatus status = null;
@@ -92,44 +90,6 @@ public class MinervaAccessAspect {
 		return resJson;
 	}
 
-	@Around(value = "execution(* org.cmsideproject.minerva.controller.*.add*(..))")
-	public MinervaResponse aroundAdd(ProceedingJoinPoint joinPoint) {
-		MinervaResponse resJson = new MinervaResponse();
-		MinervaResponseStatus status = null;
-		String msg = null;
-		String statusCode = null;
-		Object data = null;
-		try {
-			resJson = (MinervaResponse) joinPoint.proceed();
-			statusCode = "100";
-			status = MinervaResponseStatus.success;
-			data = joinPoint.getArgs();
-			msg = "success";
-		} catch (ErrorInputException | ElasticSearchRequestException e) {
-			statusCode = e.getCode();
-			msg = e.getMessage();
-			status = MinervaResponseStatus.fail;
-			logger.info("" + e);
-			e.printStackTrace();
-		} catch (DTOParseFailException e) {
-			statusCode = e.getCode();
-			msg = e.getMessage();
-			status = MinervaResponseStatus.fail;
-			logger.info("" + e.getStackTrace());
-			e.printStackTrace();
-		} catch (Throwable e) {
-			statusCode = "-1";
-			msg = "unexpected error";
-			status = MinervaResponseStatus.error;
-			logger1.TicketInfo("" + e.getStackTrace());
-			e.printStackTrace();
-		} finally {
-			resJson = new MinervaResponse.MinervaResponseMsgBuilder().message(msg).statusCode(statusCode).build();
-		}
-
-		return resJson;
-	}
-	
 
 	@After("execution(* org.cmsideproject.minerva.service.*.save*(..))")
 	public void refreshAliasIndicesMapping(JoinPoint joinPoint) throws ErrorInputException, IOException, ParseException {
@@ -160,5 +120,4 @@ public class MinervaAccessAspect {
 
 		logger.info(" \n =======================");
 	}
-
 }

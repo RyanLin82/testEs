@@ -1,4 +1,4 @@
-package org.cmsideproject.minerva.restapi;
+package org.cmsideproject.minerva.integration.restapi;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,9 +11,9 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cmsideproject.component.AliasSetting;
-import org.cmsideproject.component.TicketIndices;
-import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
-import org.cmsideproject.minerva.repo.TestTicketSummaryRepository;
+import org.cmsideproject.component.TicketIndicesAlias;
+import org.cmsideproject.minerva.entity.TicketSummary;
+import org.cmsideproject.minerva.repo.SummaryRepository;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,19 +38,19 @@ public class MainControllerTest extends AbstractTest {
 //	private MockMvc mockMvc;
 
 	@Mock
-	TestTicketSummaryRepository testTicketSummaryRepository;
+	SummaryRepository testTicketSummaryRepository;
 
 	@Mock
 	AliasSetting aliasSetting;
 
 	@Mock
-	TicketIndices ticketIndices;
+	TicketIndicesAlias ticketIndices;
 
 //	@InjectMocks 
 //	org.cmsideproject.minerva.controller.MainController mainController;
 
 	private static List<Map<String, Object>> data;
-	private static List<TicketSummarySpringDataDTO> dataEntity;
+	private static List<TicketSummary> dataEntity;
 	private static String dataJson;
 
 	@BeforeClass
@@ -94,10 +94,10 @@ public class MainControllerTest extends AbstractTest {
 		data = mapper.readValue(dataJson, new TypeReference<List<Map<String, Object>>>() {
 		});
 
-		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
+		List<TicketSummary> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
 		for (Map<String, Object> map : data) {
-			TicketSummarySpringDataDTO ticket = mapper2.map(map, TicketSummarySpringDataDTO.class);
+			TicketSummary ticket = mapper2.map(map, TicketSummary.class);
 			resultList.add(ticket);
 		}
 		dataEntity = resultList;
@@ -113,7 +113,7 @@ public class MainControllerTest extends AbstractTest {
 				.andReturn();
 		System.out.println("tttttt");
 
-		Mockito.when(testTicketSummaryRepository.save(Mockito.any(TicketSummarySpringDataDTO.class)));
+		Mockito.when(testTicketSummaryRepository.save(Mockito.any(TicketSummary.class)));
 		int status = mvcResult.getResponse().getStatus();
 		
 		
@@ -128,7 +128,7 @@ public class MainControllerTest extends AbstractTest {
 		log.info("======start=====\nmethod name:[{}]\nurl: [{}]\ninputData:[{}]", "findByTicketNumber", uri, "(ticketNumber,"+dataEntity.get(0).getJira()+")");
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).param("ticketNumber", dataEntity.get(0).getJira())).andReturn();
 		
-		Optional<List<TicketSummarySpringDataDTO>> result = Optional.empty();
+		Optional<List<TicketSummary>> result = Optional.empty();
 		int status = mvcResult.getResponse().getStatus();
 		assertEquals(200, status);
 		log.info("return status code:[{}]\nresponse data: [{}]======end=====\\n", status, "");

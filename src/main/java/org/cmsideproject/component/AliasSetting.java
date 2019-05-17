@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.cmsideproject.exception.ErrorInputException;
 import org.cmsideproject.log.MinervaLog;
 import org.cmsideproject.log.MinervaLogImp;
-import org.cmsideproject.minerva.entity.TicketSummarySpringDataDTO;
+import org.cmsideproject.minerva.entity.TicketSummary;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
 import org.elasticsearch.client.transport.TransportClient;
 import org.modelmapper.ModelMapper;
@@ -27,6 +27,7 @@ public class AliasSetting {
 	private final String indexNamePattern = "test_ryan_";
 
 	private final String aliasPattern = "ryan_";
+	
 	@Autowired
 	TransportClient client;
 
@@ -64,7 +65,7 @@ public class AliasSetting {
 		client.admin().indices().prepareAliases().addAlias(indexName.toArray(new String[0]), aliasName).execute();
 		log.info("IndexName", indexName.toString(), "aliasName", aliasName);
 	}
-	
+
 	/**
 	 * Set list of indices' alias.
 	 * 
@@ -72,14 +73,15 @@ public class AliasSetting {
 	 * @param aliasName
 	 * @throws IOException
 	 * @throws ErrorInputException
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
-	public void setAliasByEntity(List<TicketSummarySpringDataDTO> indexName) throws IOException, ErrorInputException, ParseException {
+	public void setAliasByEntity(List<TicketSummary> indexName)
+			throws IOException, ErrorInputException, ParseException {
 
 		if (indexName == null || indexName.size() == 0) {
 			throw new ErrorInputException("Alias setting miss indexName or aliasName");
 		}
-		for (TicketSummarySpringDataDTO dto : indexName) {
+		for (TicketSummary dto : indexName) {
 			this.setAlias(dto);
 		}
 	}
@@ -91,16 +93,17 @@ public class AliasSetting {
 	 * @throws ParseException
 	 * @throws ErrorInputException
 	 */
-	public void setAlias(TicketSummarySpringDataDTO data) throws ParseException, ErrorInputException {
+	public void setAlias(TicketSummary data) throws ParseException, ErrorInputException {
 
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		DateFormat df2 = new SimpleDateFormat("yyyyMM");
-		DateFormat df3 = new SimpleDateFormat("yyyy");
-
+		
 		if (StringUtils.isEmpty(data.getJira()) || StringUtils.isEmpty(data.getDoneDate())) {
 			throw new ErrorInputException("Alias setting miss ticketNumber or doneDate");
 		}
 
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat df2 = new SimpleDateFormat("yyyyMM");
+		DateFormat df3 = new SimpleDateFormat("yyyy");
+		
 		String index = indexNamePattern + df2.format(df.parse(data.getDoneDate())).toLowerCase();
 		String alias = aliasPattern + df3.format(df3.parse(df2.format(df.parse(data.getDoneDate()))));
 
@@ -120,11 +123,11 @@ public class AliasSetting {
 	 */
 	public void setAlias(List<Map<String, Object>> data) throws ParseException, ErrorInputException {
 
-		List<TicketSummarySpringDataDTO> datalist = this.listMapToListObject(data);
+		List<TicketSummary> datalist = this.listMapToListObject(data);
 		if (data == null || data.size() == 0) {
 			throw new ErrorInputException("Alias setting miss ticket Information");
 		}
-		for (TicketSummarySpringDataDTO dto : datalist) {
+		for (TicketSummary dto : datalist) {
 			this.setAlias(dto);
 		}
 	}
@@ -135,11 +138,11 @@ public class AliasSetting {
 	 * @param dataList
 	 * @return
 	 */
-	private List<TicketSummarySpringDataDTO> listMapToListObject(List<Map<String, Object>> dataList) {
-		List<TicketSummarySpringDataDTO> resultList = new ArrayList<>();
+	private List<TicketSummary> listMapToListObject(List<Map<String, Object>> dataList) {
+		List<TicketSummary> resultList = new ArrayList<>();
 		ModelMapper mapper2 = new ModelMapper();
 		for (Map<String, Object> map : dataList) {
-			TicketSummarySpringDataDTO ticket = mapper2.map(map, TicketSummarySpringDataDTO.class);
+			TicketSummary ticket = mapper2.map(map, TicketSummary.class);
 			resultList.add(ticket);
 		}
 		return resultList;

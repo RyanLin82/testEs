@@ -1,12 +1,12 @@
-package org.cmsideproject.minerva.restapi;
+package org.cmsideproject.minerva.integration.restapi;
 
 
 import java.util.ArrayList;
 
 import org.cmsideproject.component.AliasSetting;
-import org.cmsideproject.component.TicketIndices;
+import org.cmsideproject.component.TicketIndicesAlias;
 import org.cmsideproject.minerva.entity.MinervaResponse;
-import org.cmsideproject.minerva.service.TestTicketSumaryService;
+import org.cmsideproject.minerva.service.TicketSumaryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,10 +30,10 @@ public class controllerTest2 {
 	AliasSetting aliasSetting;
 	
 	@Mock
-	TicketIndices ticketIndices;
+	TicketIndicesAlias ticketIndices;
 	
 	@Mock
-	private TestTicketSumaryService testTicketSumaryService;
+	private TicketSumaryService testTicketSumaryService;
 
 	@InjectMocks 
 	org.cmsideproject.minerva.controller.MainController mainController;
