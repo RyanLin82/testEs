@@ -54,6 +54,7 @@ public class TicketSumaryServiceImpl implements TicketSumaryService {
 		this.ticketRepository = ticketRepository;
 	}
 
+	
 	@Override
 	public void save(List<Map<String, Object>> data) throws ErrorInputException, ParseException, IOException {
 		List<TicketSummary> datalist = new ArrayList<>();
