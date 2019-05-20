@@ -1,10 +1,7 @@
 package org.cmsideproject.component;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +24,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
@@ -109,10 +107,8 @@ public class TicketIndicesAlias {
 	 * @return if aliasIndicesMapping is not null then return Map<String,
 	 *         Set<AliasMetaData>>; otherwise return empty Hashmap
 	 */
-	@Cacheable("test4")
+	@Cacheable("aliasIndicesMapping")
 	public Map<String, Set<AliasMetaData>> getAliasIndicesMapping() {
-		DateFormat sdf = new SimpleDateFormat("MM/dd hhmmss");
-		System.out.println("getAliasIndicesMapping === " + sdf.format(Calendar.getInstance().getTime()));
 		return aliasIndicesMapping == null ? new HashMap<>() : aliasIndicesMapping;
 	}
 
@@ -122,10 +118,8 @@ public class TicketIndicesAlias {
 	 * @return if aliasName is not null then return Set<String>; otherwise return
 	 *         empty HashSet.
 	 */
-	@Cacheable("test")
+	@Cacheable("aliasName")
 	public Set<String> getAlias() {
-		DateFormat sdf = new SimpleDateFormat("MM/dd hhmmss");
-		System.out.println("getAlias === " + sdf.format(Calendar.getInstance().getTime()));
 		return aliasName == null ? new HashSet<>() : aliasName;
 	}
 
@@ -135,10 +129,8 @@ public class TicketIndicesAlias {
 	 * @return if indicesName is not null then return Set<String>; otherwise return
 	 *         empty HashSet.
 	 */
-	@Cacheable("test2")
+	@Cacheable("indicesName")
 	public Set<String> getIndicesName() {
-		DateFormat sdf = new SimpleDateFormat("MM/dd hhmmss");
-		System.out.println("getIndicesName === " + sdf.format(Calendar.getInstance().getTime()));
 		return indicesName == null ? new HashSet<>() : indicesName;
 	}
 
@@ -148,10 +140,8 @@ public class TicketIndicesAlias {
 	 * @return if indexTicketNumMapping is not null then return Map<String,
 	 *         Set<String>>; otherwise return empty HashSet.
 	 */
-	@Cacheable("test3")
+	@Cacheable("indexTicketNumMapping")
 	public Map<String, Set<String>> getIndexTicketNumMapping() {
-		DateFormat sdf = new SimpleDateFormat("MM/dd hhmmss");
-		System.out.println("getIndexTicketNumMapping === " + sdf.format(Calendar.getInstance().getTime()));
 		return indexTicketNumMapping == null ? new HashMap<>() : indexTicketNumMapping;
 	}
 
@@ -160,6 +150,7 @@ public class TicketIndicesAlias {
 	 * 
 	 * @throws IOException
 	 */
+	@CacheEvict(value = "indicesName")
 	private void setIndices() throws IOException {
 		Set<String> value = response.getIndices().keySet();
 		Set<String> indices = new HashSet<>();
@@ -171,6 +162,7 @@ public class TicketIndicesAlias {
 		indicesName = indices;
 	}
 
+	@CacheEvict(value = "aliasName")
 	private void setAlias() {
 		aliasName = new HashSet<>();
 		for (String alias : aliasIndicesMapping.keySet()) {
@@ -183,6 +175,7 @@ public class TicketIndicesAlias {
 	 * 
 	 * @throws IOException
 	 */
+	@CacheEvict(value = "indexTicketNumMapping")
 	private void setIndexTicketNumMapping() throws IOException {
 
 		SearchRequest searchRequest = new SearchRequest();
@@ -210,6 +203,7 @@ public class TicketIndicesAlias {
 	 * 
 	 * @throws IOException
 	 */
+	@CacheEvict(value = "aliasIndicesMapping")
 	private void setAliasMappingIndex() throws IOException {
 
 		GetAliasesRequest request = new GetAliasesRequest();

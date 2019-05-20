@@ -46,7 +46,6 @@ public class MainController {
 
 		MinervaResponse minervaResponse = new MinervaResponse();
 		testTicketSumaryService.save(data);
-		System.out.println("mokito testttt");
 		return minervaResponse;
 	}
 
@@ -63,7 +62,6 @@ public class MainController {
 	@RequestMapping(value = "TicketSummary/findByDate", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse findByDate(@RequestParam String fromDate, @RequestParam String thrDate)
 			throws ParseException, InterruptedException, ExecutionException {
-		System.out.println("tttttttttttt");
 		MinervaResponse minervaResponse = new MinervaResponse();
 		minervaResponse.setData(testTicketSumaryService.getByDate(fromDate, thrDate));
 		return minervaResponse;
@@ -80,9 +78,7 @@ public class MainController {
 	 */
 	@RequestMapping(value = "TicketSummary/findByTicketNumber", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse findByTicketNumber(@RequestParam String ticketNumber) {
-		System.out.println(ticketNumber);
 		MinervaResponse minervaResponse = new MinervaResponse();
-		System.out.println("mokito testttt2");
 		minervaResponse.setData(testTicketSumaryService.findByJira(ticketNumber).get());
 		return minervaResponse;
 	}
@@ -141,6 +137,14 @@ public class MainController {
 		ticketIndices.getAliasIndicesMapping();
 		ticketIndices.getIndexTicketNumMapping();
 		ticketIndices.getIndicesName();
+		return minervaResponse;
+	}
+	
+	@RequestMapping(value = "TicketSummary/test2", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public MinervaResponse test2() throws IOException {
+		MinervaResponse minervaResponse = new MinervaResponse();
+
+		ticketIndices.refreshData();
 		return minervaResponse;
 	}
 }

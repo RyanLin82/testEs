@@ -2,7 +2,6 @@ package org.cmsideproject.config;
 
 import java.util.Arrays;
 
-import org.cmsideproject.component.TicketIndicesAlias;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -15,18 +14,13 @@ import org.springframework.context.annotation.Configuration;
 public class CachingConfig {
   
     @Bean
-    public TicketIndicesAlias customerDataService() {
-        return new TicketIndicesAlias();
-    }
- 
-    @Bean
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
         cacheManager.setCaches(Arrays.asList(
-          new ConcurrentMapCache("test"), 
-          new ConcurrentMapCache("test2"),
-          new ConcurrentMapCache("test3"),
-          new ConcurrentMapCache("test4")));
+          new ConcurrentMapCache("aliasIndicesMapping"), 
+          new ConcurrentMapCache("indexTicketNumMapping"),
+          new ConcurrentMapCache("aliasName"),
+          new ConcurrentMapCache("indicesName")));
         return cacheManager;
     }
 }
