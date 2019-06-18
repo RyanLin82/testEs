@@ -17,6 +17,7 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasA
 import org.elasticsearch.client.transport.TransportClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,9 +25,11 @@ public class AliasSetting {
 
 	private MinervaLog log = new MinervaLogImp(this.getClass());
 
-	private final String indexNamePattern = "test_ryan_";
+	@Value("${Format.index}")
+	private String indexNamePattern;
 
-	private final String aliasPattern = "ryan_";
+	@Value("${Format.alias}")
+	private String aliasPattern;
 	
 	@Autowired
 	TransportClient client;
