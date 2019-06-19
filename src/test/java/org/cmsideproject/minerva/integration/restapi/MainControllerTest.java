@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MainControllerTest extends AbstractTest {
 
 	private Logger log = LogManager.getLogger(this.getClass());
-	org.cmsideproject.minerva.controller.MainController MainController;
+	org.cmsideproject.minerva.controller.Controller MainController;
 
 //	private MockMvc mockMvc;
 

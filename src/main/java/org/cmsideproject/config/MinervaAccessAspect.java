@@ -27,22 +27,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MinervaAccessAspect {
 	private Logger logger = LogManager.getLogger(this.getClass());
-	
-	private MinervaLogImp logger1 = new MinervaLogImp(this.getClass());
-	
+
+	private MinervaLogImp log = new MinervaLogImp(this.getClass());
+
 	@Autowired
 	AliasSetting aliasSetting;
-	
+
 	@Autowired
 	TicketIndicesAlias ticketIndices;
- 
+
 	@Before("execution(* org.cmsideproject.minerva.controller.*.*(..))")
 	public void before(JoinPoint joinPoint) {
 
-		logger1.TicketInfo(" \n ======================= [{}]", joinPoint);
+		log.info(" \nMinverva service start \n");
 
-		logger1.TicketInfo(" \nMinverva service start \n");
-		
 		String args = "\nRequest Args: ";
 
 		for (Object object : joinPoint.getArgs()) {
@@ -65,45 +63,40 @@ public class MinervaAccessAspect {
 			status = MinervaResponseStatus.success;
 			data = joinPoint.getArgs();
 			msg = "success";
-		} catch (ErrorInputException | ElasticSearchRequestException e) {
+		} catch (ErrorInputException | ElasticSearchRequestException | DTOParseFailException e) {
 			statusCode = e.getCode();
 			msg = e.getMessage();
 			status = MinervaResponseStatus.fail;
 			logger.info("" + e);
 			e.printStackTrace();
-		} catch (DTOParseFailException e) {
-			statusCode = e.getCode();
-			msg = e.getMessage();
-			status = MinervaResponseStatus.fail;
-			logger.info("" + e.getStackTrace());
-			e.printStackTrace();
 		} catch (Throwable e) {
 			statusCode = "-1";
 			msg = "unexpected error";
 			status = MinervaResponseStatus.error;
-			logger1.TicketInfo("" + e.getStackTrace());
+			log.info("" + e.getStackTrace());
 			e.printStackTrace();
 		} finally {
-			resJson = new MinervaResponse.MinervaResponseMsgBuilder().message(msg).statusCode(statusCode).data(resJson.getData()).build();
+			resJson = new MinervaResponse.MinervaResponseMsgBuilder().status(status).message(msg).statusCode(statusCode)
+					.data(resJson.getData()).build();
 		}
 
 		return resJson;
 	}
 
-
 	@After("execution(* org.cmsideproject.minerva.service.*.save*(..))")
-	public void refreshAliasIndicesMapping(JoinPoint joinPoint) throws ErrorInputException, IOException, ParseException {
+	public void refreshAliasIndicesMapping(JoinPoint joinPoint)
+			throws ErrorInputException, IOException, ParseException {
 
 		Object[] temp = joinPoint.getArgs();
 		List temp2 = (List) temp[0];
-		if(temp2 !=null && temp2.size()!=0) {
+		if (temp2 != null && temp2.size() != 0) {
 			aliasSetting.setAlias(temp2);
 			ticketIndices.refreshData();
 		}
-		logger1.TicketInfo(" \n ========refreshAliasIndicesMapping=============== [{}]", joinPoint);
+		log.info(" \n ========refreshAliasIndicesMapping===============");
 
 	}
-	
+
 	@After("execution(* org.cmsideproject.minerva.controller.*.*(..))")
 	public void after2(JoinPoint joinPoint) {
 		// Advice

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/minerva")
-public class MainController {
+public class Controller {
 
 	@Autowired
 	private TicketSumaryService testTicketSumaryService;
@@ -35,7 +35,7 @@ public class MainController {
 	 * Insert ticket information.
 	 * 
 	 * @param data
-	 * @return
+	 * @return MinervaResponse
 	 * @throws ErrorInputException
 	 * @throws ParseException
 	 * @throws IOException
@@ -54,7 +54,7 @@ public class MainController {
 	 * 
 	 * @param fromDate
 	 * @param thrDate
-	 * @return
+	 * @return MinervaResponse
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws ExecutionException
@@ -71,7 +71,7 @@ public class MainController {
 	 * Find the ticket information by ticketNumber
 	 * 
 	 * @param ticketNumber
-	 * @return
+	 * @return MinervaResponse
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws ExecutionException
@@ -94,6 +94,15 @@ public class MainController {
 	 * @throws ParseException
 	 * @throws IOException
 	 */
+	
+	/**
+	 * update list of data
+	 * @param data
+	 * @return MinervaResponse
+	 * @throws ErrorInputException
+	 * @throws ParseException
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "TicketSummary/update", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse update(@RequestBody List<Map<String, Object>> data)
 			throws ErrorInputException, ParseException, IOException {
@@ -102,6 +111,15 @@ public class MainController {
 		return minervaResponse;
 	}
 
+	
+	/**
+	 * Set certain ticketNumber data with alias.
+	 * @param aliasName
+	 * @param indexName
+	 * @return MinervaResponse
+	 * @throws ErrorInputException
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "TicketSummary/setAlias", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public MinervaResponse setAlias(@RequestParam String aliasName, @RequestParam String indexName)
 			throws ErrorInputException, IOException {

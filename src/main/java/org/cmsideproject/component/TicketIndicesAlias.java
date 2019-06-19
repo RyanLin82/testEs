@@ -24,8 +24,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,7 +39,8 @@ public class TicketIndicesAlias {
 	@Autowired
 	RestHighLevelClient restClient;
 
-	private final String indicesPattern = "RYAN";
+	@Value("${Format.index}")
+	private String indicesPattern;
 
 	public Map<String, Set<AliasMetaData>> aliasIndicesMapping;
 
@@ -67,6 +67,16 @@ public class TicketIndicesAlias {
 		setIndexTicketNumMapping();
 	}
 
+	public String getIndexNameByTicketNumber(String ticketNumber) {
+		
+		for(Map.Entry<String, Set<String>> ticket : indexTicketNumMapping.entrySet()) {
+			if(ticket.getValue().contains(ticketNumber)) {
+				return ticket.getKey();
+			}
+		}
+		return "";
+	}
+	
 	/**
 	 * Check whether input index name exists.
 	 * 
@@ -107,7 +117,6 @@ public class TicketIndicesAlias {
 	 * @return if aliasIndicesMapping is not null then return Map<String,
 	 *         Set<AliasMetaData>>; otherwise return empty Hashmap
 	 */
-	@Cacheable("aliasIndicesMapping")
 	public Map<String, Set<AliasMetaData>> getAliasIndicesMapping() {
 		return aliasIndicesMapping == null ? new HashMap<>() : aliasIndicesMapping;
 	}
@@ -118,7 +127,6 @@ public class TicketIndicesAlias {
 	 * @return if aliasName is not null then return Set<String>; otherwise return
 	 *         empty HashSet.
 	 */
-	@Cacheable("aliasName")
 	public Set<String> getAlias() {
 		return aliasName == null ? new HashSet<>() : aliasName;
 	}
@@ -129,7 +137,6 @@ public class TicketIndicesAlias {
 	 * @return if indicesName is not null then return Set<String>; otherwise return
 	 *         empty HashSet.
 	 */
-	@Cacheable("indicesName")
 	public Set<String> getIndicesName() {
 		return indicesName == null ? new HashSet<>() : indicesName;
 	}
@@ -140,7 +147,6 @@ public class TicketIndicesAlias {
 	 * @return if indexTicketNumMapping is not null then return Map<String,
 	 *         Set<String>>; otherwise return empty HashSet.
 	 */
-	@Cacheable("indexTicketNumMapping")
 	public Map<String, Set<String>> getIndexTicketNumMapping() {
 		return indexTicketNumMapping == null ? new HashMap<>() : indexTicketNumMapping;
 	}
@@ -150,19 +156,17 @@ public class TicketIndicesAlias {
 	 * 
 	 * @throws IOException
 	 */
-	@CacheEvict(value = "indicesName")
 	private void setIndices() throws IOException {
 		Set<String> value = response.getIndices().keySet();
 		Set<String> indices = new HashSet<>();
 		for (String index : value) {
-			if (StringUtils.contains(index.toUpperCase(), indicesPattern)) {
+			if (StringUtils.contains(index.toUpperCase(), indicesPattern.toUpperCase())) {
 				indices.add(index);
 			}
 		}
 		indicesName = indices;
 	}
 
-	@CacheEvict(value = "aliasName")
 	private void setAlias() {
 		aliasName = new HashSet<>();
 		for (String alias : aliasIndicesMapping.keySet()) {
@@ -175,7 +179,6 @@ public class TicketIndicesAlias {
 	 * 
 	 * @throws IOException
 	 */
-	@CacheEvict(value = "indexTicketNumMapping")
 	private void setIndexTicketNumMapping() throws IOException {
 
 		SearchRequest searchRequest = new SearchRequest();
@@ -203,14 +206,13 @@ public class TicketIndicesAlias {
 	 * 
 	 * @throws IOException
 	 */
-	@CacheEvict(value = "aliasIndicesMapping")
 	private void setAliasMappingIndex() throws IOException {
 
 		GetAliasesRequest request = new GetAliasesRequest();
 
 		List<String> indicesList = new ArrayList<>();
 		for (String indexName : indicesName) {
-			if (StringUtils.containsAny(indicesPattern, indexName.toUpperCase())) {
+			if (StringUtils.containsAny(indicesPattern.toUpperCase(), indexName.toUpperCase())) {
 				indicesList.add(indexName);
 			}
 		}

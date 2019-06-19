@@ -4,5 +4,7 @@
 
 101 : Fail to get response from elasticsearch server url : [{0}]
 
-102 : Input data is error
+102 : Input data is error: [{0}]
+
+103: 
 

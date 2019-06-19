@@ -29,17 +29,8 @@ public class MinervaLogImp implements MinervaLog {
 
 	}
 
-	public void TicketInfo(String message, Object p0) {
-		log.info(message, p0);
-	}
-
-	public void TicketInfo(String message) {
-		log.info(message);
-	}
-
 	@Override
 	public void TicketInfo(String indexName, String method, String url, Object data) {
-		// TODO Auto-generated method stub
 		log.info("\n timestamp: [{}] \n index name : [{}], \n method: [{}] \n url: [{}] \n data: [{}]", new Date(),
 				indexName, method, url, data);
 
@@ -47,28 +38,32 @@ public class MinervaLogImp implements MinervaLog {
 
 	@Override
 	public void TicketInfo(String indexName, String method, String url) {
-		// TODO Auto-generated method stub
 		log.info("\n timestamp: [{}] \n index name : [{}], \n method name: [{}] \n url: [{}] \n", new Date(), indexName,
 				method, url);
 
 	}
 
+	@Override
 	public void info(String title1, String value1, String title2, String value2, Object data) {
 		log.info("\n timestamp: [{}] \n [{}] : [{}], \n [{}] : [{}] \n data: [{}] \n", new Date(), title1, value1,
 				title2, value2, data);
 	}
-	
+
+	@Override
 	public void info(String title1, String value1, String title2, String value2) {
-		log.info("\n timestamp: [{}] \n [{}] : [{}], \n [{}] : [{}] \n", new Date(), title1, value1,
-				title2, value2);
+		log.info("\n timestamp: [{}] \n [{}] : [{}], \n [{}] : [{}] \n", new Date(), title1, value1, title2, value2);
+	}
+
+	@Override
+	public void info(String indexName, String method, Object data) {
+		log.info("\n timestamp: [{}] \n index name : [{}], \n method: [{}] \n data: [{}]", new Date(), indexName,
+				method, data);
+
 	}
 	
 	@Override
-	public void info(String indexName, String method, Object data) {
-		// TODO Auto-generated method stub
-		log.info("\n timestamp: [{}] \n index name : [{}], \n method: [{}] \n data: [{}]", new Date(),
-				indexName, method, data);
-
+	public void info(String message) {
+		log.info(message);
 	}
 
 }

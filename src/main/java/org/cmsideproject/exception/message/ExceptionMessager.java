@@ -39,9 +39,8 @@ public class ExceptionMessager {
 		File propertiesFile = new File(messageFile);
 
 		Parameters params = new Parameters();
-		FileBasedConfigurationBuilder<FileBasedConfiguration> builder = 
-				new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-				.configure(params.fileBased().setFile(propertiesFile));
+		FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
+				PropertiesConfiguration.class).configure(params.fileBased().setFile(propertiesFile));
 
 		try {
 			Configuration config = builder.getConfiguration();

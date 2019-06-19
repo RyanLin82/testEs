@@ -117,11 +117,6 @@ public class EsConfig {
 	}
 
 	@Bean
-	Suffix suffix() {
-		return new Suffix();
-	}
-
-	@Bean
 	public RestHighLevelClient restClient() {
 		CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUserName, esUserPassword));

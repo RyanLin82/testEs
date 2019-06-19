@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(MockitoJUnitRunner.class)
 public class controllerTest2 {
 
-	org.cmsideproject.minerva.controller.MainController MainController;
+	org.cmsideproject.minerva.controller.Controller MainController;
 
 //	private MockMvc mockMvc;
 	
@@ -36,7 +36,7 @@ public class controllerTest2 {
 	private TicketSumaryService testTicketSumaryService;
 
 	@InjectMocks 
-	org.cmsideproject.minerva.controller.MainController mainController;
+	org.cmsideproject.minerva.controller.Controller mainController;
 	
 	
 	

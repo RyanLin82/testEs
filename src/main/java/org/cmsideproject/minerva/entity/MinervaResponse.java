@@ -16,7 +16,7 @@ public class MinervaResponse {
 
 	public MinervaResponse() {
 	}
-	
+
 	public MinervaResponse(MinervaResponseMsgBuilder builder) {
 		this.message = builder.message;
 		this.data = builder.data;
@@ -59,7 +59,6 @@ public class MinervaResponse {
 	public String getVersion() {
 		return version;
 	}
-
 
 	public static class MinervaResponseMsgBuilder {
 

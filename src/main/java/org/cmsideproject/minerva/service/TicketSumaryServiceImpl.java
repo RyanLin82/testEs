@@ -27,6 +27,7 @@ import org.elasticsearch.action.admin.indices.alias.get.GetAliasesResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,6 +46,12 @@ public class TicketSumaryServiceImpl implements TicketSumaryService {
 	
 	@Autowired
 	AliasSetting aliasSetting;
+	
+	@Value("${Format.alias}")
+	private String aliasPattern;
+	
+	@Value("${Format.index}")
+	private String indexNamePattern;
 
 	@Autowired
 	private TicketIndicesAlias ticketIndices;
@@ -67,8 +74,7 @@ public class TicketSumaryServiceImpl implements TicketSumaryService {
 		data = this.removeDuplicateDataInEs(data);
 		List<String> indices = new ArrayList<>();
 		for (TicketSummary ticket : data) {
-			String indexName = "test_ryan_" + this.getIndex(ticket);
-//			setIndex(ticket);
+			String indexName = indexNamePattern + this.getIndex(ticket);
 			this.setIndexByMonth(ticket);
 			ticketRepository.save(ticket);
 			indices.add(indexName);
@@ -79,6 +85,7 @@ public class TicketSumaryServiceImpl implements TicketSumaryService {
 
 	@Override
 	public Optional<List<TicketSummary>> findByJira(String id) {
+		suffix.setValue(ticketIndices.getIndexNameByTicketNumber(id));
 		return ticketRepository.findByJira(id);
 	}
 
@@ -98,9 +105,9 @@ public class TicketSumaryServiceImpl implements TicketSumaryService {
 		List list = new ArrayList<>();
 
 		for (Date temp = start.getTime(); start.before(end); start.add(Calendar.MONTH, 1), temp = start.getTime()) {
-			System.out.println("ryan_" + sdf2.format(temp));
+			System.out.println(aliasPattern + sdf2.format(temp));
 
-			list.add(this.getByAlias("ryan_" + sdf2.format(temp)));
+			list.add(this.getByAlias(aliasPattern + sdf2.format(temp)));
 		}
 
 		return list;
@@ -116,7 +123,7 @@ public class TicketSumaryServiceImpl implements TicketSumaryService {
 		for (Iterator<String> it = r.getAliases().keysIt(); it.hasNext();) {
 			// HERE IS THE REALINDEXNAME
 			String realIndexName = it.next();
-			suffix.setValue(realIndexName.replaceFirst("test_ryan_", ""));
+			suffix.setValue(realIndexName);
 			list.add(ticketRepository.findAll());
 		}
 		return list;

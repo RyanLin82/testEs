@@ -108,10 +108,9 @@ public class AliasSetting {
 		DateFormat df3 = new SimpleDateFormat("yyyy");
 		
 		String index = indexNamePattern + df2.format(df.parse(data.getDoneDate())).toLowerCase();
-		String alias = aliasPattern + df3.format(df3.parse(df2.format(df.parse(data.getDoneDate()))));
+		String alias = aliasPattern + df3.format(df.parse(data.getDoneDate()));
 
 		AliasActions action = new AliasActions(AliasActions.Type.ADD).index(index).alias(alias);
-
 		client.admin().indices().prepareAliases().addAliasAction(action).execute();
 
 		log.info("index", index, "alias", alias, data);
